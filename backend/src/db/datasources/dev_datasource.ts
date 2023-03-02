@@ -5,8 +5,6 @@ import { DataSource } from 'typeorm';
 import { User } from "../models/user";
 import { IPHistory } from "../models/ip_history";
 import { Initialize1676281754950 } from "../migrations/1676281754950-Initialize";
-import { Profile } from "../models/profile.js";
-import { ProfilesMigration1676586883555 } from "../migrations/1676586883555-ProfilesMigration.js";
 
 dotenv.config();
 
@@ -23,12 +21,10 @@ export const AppDataSource = new DataSource({
 	// entities are used to tell TypeORM which tables to create in the database
 	entities: [
 		User,
-		IPHistory,
-		Profile
+		IPHistory
 	],
 	migrations: [
 		Initialize1676281754950,
-		ProfilesMigration1676586883555
 
 	],
 	// DANGER DANGER our convenience will nuke production data!

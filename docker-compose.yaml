@@ -1,17 +1,17 @@
 version: '3'
 services:
   postgres:
-    container_name: postgres
+    container_name: meal-planner
     image: postgres:15-alpine
     restart: always
     ports:
-      - "5432:5432" 
+      - "5434:5432" 
     volumes:
       - db:/var/lib/postgresql/data
     environment:
-      - POSTGRES_USER=doggr
-      - POSTGRES_PASSWORD=doggr
-      - POSTGRES_DB=doggr
+      - POSTGRES_USER=planner
+      - POSTGRES_PASSWORD=planner
+      - POSTGRES_DB=planner
     #network_mode: host
 #  backend:
 #    container_name: backend
