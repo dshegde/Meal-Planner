@@ -12,6 +12,7 @@ import {
 
 import { IPHistory } from "./ip_history";
 import { MealPlans } from "./meal_plans";
+import { ShoppingList } from "./shopping_list";
 
 /**
  *  Class representing user table
@@ -36,6 +37,9 @@ export class User extends BaseEntity {
 
   @OneToMany((type) => MealPlans, (mp: MealPlans) => mp.user)
   mps: Relation<MealPlans[]>;
+
+  @OneToMany((type) => ShoppingList, (sl: ShoppingList) => sl.user)
+  slIds: Relation<ShoppingList[]>;
 
   @CreateDateColumn()
   created_at: string;

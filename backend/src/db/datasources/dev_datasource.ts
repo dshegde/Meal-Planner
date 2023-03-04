@@ -1,16 +1,21 @@
 // We need dotenv here because our datasources are processed from CLI in addition to vite
 import dotenv from "dotenv";
-import { DataSource } from 'typeorm';
+import { DataSource } from "typeorm";
 // Similar reasoning as above, we need to add the file extensions to this file's imports for CLI usage
 import { User } from "../models/user";
 import { IPHistory } from "../models/ip_history";
 import { InitialUserAndIP1677727436444 } from "../migrations/1677727436444-InitialUserAndIP.js";
 import { MealPlans } from "../models/meal_plans.js";
-import { MealPlan1677900906977 } from "../migrations/1677900906977-MealPlan.js";
+import { Recipes } from "../models/recipes.js";
+import { RecipeAndMealPlan1677949379149 } from "../migrations/1677949379149-RecipeAndMealPlan.js";
+import { Ingredients } from "../models/ingredients.js";
+import { IngredientsAndRecipeRelation1677950313532 } from "../migrations/1677950313532-IngredientsAndRecipeRelation.js";
+import { ShoppingList } from "../models/shopping_list.js";
+import { ShoppingListInitUserAndIngRel1677951945972 } from "../migrations/1677951945972-ShoppingListInit_UserAndIngRel.js";
 
 dotenv.config();
 
-// @ts-ignore 
+// @ts-ignore
 const env = process.env;
 
 export const AppDataSource = new DataSource({
@@ -21,15 +26,8 @@ export const AppDataSource = new DataSource({
     password: env.VITE_DB_PASS,
     database: env.VITE_DB_NAME,
     // entities are used to tell TypeORM which tables to create in the database
-    entities: [
-        User,
-        IPHistory,
-        MealPlans
-    ],
-    migrations: [
-        InitialUserAndIP1677727436444,
-        MealPlan1677900906977
-    ],
+    entities: [User, IPHistory, MealPlans, Recipes, Ingredients, ShoppingList],
+    migrations: [InitialUserAndIP1677727436444, RecipeAndMealPlan1677949379149, IngredientsAndRecipeRelation1677950313532, ShoppingListInitUserAndIngRel1677951945972],
     // DANGER DANGER our convenience will nuke production data!
     synchronize: false
 });

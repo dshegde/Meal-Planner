@@ -10,6 +10,7 @@ import {
   UpdateDateColumn,
   ManyToOne,
 } from "typeorm";
+import { Recipes } from "./recipes";
 
 import { User } from "./user";
 
@@ -28,9 +29,6 @@ export class MealPlans extends BaseEntity {
   mealType: string;
 
   @Column()
-  recipeId: number;
-
-  @Column()
   dayOfWeek: string;
 
   // user
@@ -41,6 +39,15 @@ export class MealPlans extends BaseEntity {
     onDelete: "CASCADE",
   })
   user: Relation<User>;
+
+  // recipe
+  @ManyToOne((type) => Recipes, (recipe: Recipes) => recipe.ids, {
+    //adding an MealPlans will also add associated recipe if it is new, somewhat useless in this example
+    cascade: true,
+    // if we delete a recipe, also delete their MealPlans
+    onDelete: "CASCADE",
+  })
+  recipe: Relation<Recipes>;
 
   @CreateDateColumn()
   created_at: string;
