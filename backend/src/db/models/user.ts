@@ -1,13 +1,13 @@
 /** @module Models/User */
 import {
-  BaseEntity,
-  Column,
-  CreateDateColumn,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  Relation,
-  UpdateDateColumn,
+	BaseEntity,
+	Column,
+	CreateDateColumn,
+	Entity,
+	OneToMany,
+	PrimaryGeneratedColumn,
+	Relation,
+	UpdateDateColumn,
 } from "typeorm";
 
 import { IPHistory } from "./ip_history";
@@ -23,8 +23,8 @@ export class User extends BaseEntity {
   id: number;
 
   @Column({
-    length: 100,
-    type: "varchar",
+  	length: 100,
+  	type: "varchar",
   })
   name: string;
 

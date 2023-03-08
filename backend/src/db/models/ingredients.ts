@@ -12,6 +12,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { Recipes } from "./recipes";
+import { RecipeIngredientRel } from "./recipe_ingredient_rel";
 import { ShoppingList } from "./shopping_list";
 
 /**
@@ -31,7 +32,8 @@ export class Ingredients extends BaseEntity {
   @OneToMany((type) => ShoppingList, (sl: ShoppingList) => sl.ing)
   slId: Relation<ShoppingList[]>;
 
-  @ManyToMany(() => Recipes)
-  @JoinTable()
-  rel: Recipes[];
+  @OneToMany((type) => RecipeIngredientRel, (rpi: RecipeIngredientRel) => rpi.recipe)
+  rpIngRel: Relation<RecipeIngredientRel[]>;
+
+  
 }

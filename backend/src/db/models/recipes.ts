@@ -11,6 +11,7 @@ import {
   ManyToOne,
 } from "typeorm";
 import { MealPlans } from "./meal_plans";
+import { RecipeIngredientRel } from "./recipe_ingredient_rel";
 
 import { User } from "./user";
 
@@ -39,6 +40,9 @@ export class Recipes extends BaseEntity {
 
   @OneToMany((type) => MealPlans, (mp: MealPlans) => mp.recipe)
   ids: Relation<MealPlans[]>;
+
+  @OneToMany((type) => RecipeIngredientRel, (rpi: RecipeIngredientRel) => rpi.recipe)
+  rpIngRel: Relation<RecipeIngredientRel[]>;
 
   @CreateDateColumn()
   created_at: string;

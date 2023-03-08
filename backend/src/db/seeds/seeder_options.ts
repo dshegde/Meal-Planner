@@ -6,16 +6,17 @@ import { Seeder } from "../../lib/seed_manager";
 import { MealPlansSeed } from "./meal_planner_seeder";
 import { RecipeSeed } from "./recipe_seeder";
 import { IngredientsSeed } from "./ingredients_seeder";
+import { ShoppingListSeed } from "./shoppingList_seeder";
 
 export type SeederOptionsType = {
-  seeds: Array<Seeder>;
+	seeds: Array<Seeder>;
 };
 
 /**
  * Options bag for configuring which seeds to run during `pnpm seed`
  */
 const SeederOptions: any = {
-  seeds: [UserSeed, IPHistorySeed, RecipeSeed, MealPlansSeed, IngredientsSeed],
+	seeds: [UserSeed, IPHistorySeed, RecipeSeed, MealPlansSeed, IngredientsSeed, ShoppingListSeed],
 };
 
 export default SeederOptions;

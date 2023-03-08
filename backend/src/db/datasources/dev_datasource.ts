@@ -12,6 +12,9 @@ import { Ingredients } from "../models/ingredients.js";
 import { IngredientsAndRecipeRelation1677950313532 } from "../migrations/1677950313532-IngredientsAndRecipeRelation.js";
 import { ShoppingList } from "../models/shopping_list.js";
 import { ShoppingListInitUserAndIngRel1677951945972 } from "../migrations/1677951945972-ShoppingListInit_UserAndIngRel.js";
+import { RecipeIngredientRel } from "../models/recipe_ingredient_rel.js";
+import { RpIngRelUpdated1678244285578 } from "../migrations/1678244285578-RpIngRelUpdated.js";
+import { SpListAndRpIngRelUpdated1678248239126 } from "../migrations/1678248239126-SpListAndRpIngRelUpdated.js";
 
 dotenv.config();
 
@@ -26,8 +29,8 @@ export const AppDataSource = new DataSource({
     password: env.VITE_DB_PASS,
     database: env.VITE_DB_NAME,
     // entities are used to tell TypeORM which tables to create in the database
-    entities: [User, IPHistory, MealPlans, Recipes, Ingredients, ShoppingList],
-    migrations: [InitialUserAndIP1677727436444, RecipeAndMealPlan1677949379149, IngredientsAndRecipeRelation1677950313532, ShoppingListInitUserAndIngRel1677951945972],
+    entities: [User, IPHistory, MealPlans, Recipes, Ingredients, ShoppingList, RecipeIngredientRel],
+    migrations: [InitialUserAndIP1677727436444, RecipeAndMealPlan1677949379149, IngredientsAndRecipeRelation1677950313532, ShoppingListInitUserAndIngRel1677951945972, RpIngRelUpdated1678244285578, SpListAndRpIngRelUpdated1678248239126],
     // DANGER DANGER our convenience will nuke production data!
     synchronize: false
 });

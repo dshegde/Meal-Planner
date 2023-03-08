@@ -1,11 +1,6 @@
 // /** @module Routes */
 import cors from "cors";
-import {
-  FastifyInstance,
-  FastifyReply,
-  FastifyRequest,
-  RouteShorthandOptions,
-} from "fastify";
+import { FastifyInstance, FastifyReply, FastifyRequest, RouteShorthandOptions } from "fastify";
 import { User } from "./db/models/user";
 import { IPHistory } from "./db/models/ip_history";
 import { ILike, LessThan, Not } from "typeorm";
@@ -15,17 +10,17 @@ import { ILike, LessThan, Not } from "typeorm";
  * @param {FastifyInstance} app our main Fastify app instance
  */
 export async function planner_routes(app: FastifyInstance): Promise<void> {
-  // Middleware
-  // TODO: Refactor this in favor of fastify-cors
-  app.use(cors());
-  app.get("/profiles", async (req, reply) => {
-    let profiles = await app.db.mp.find({
-      relations: {
-        user: true,
-      },
-    });
-    reply.send(profiles);
-  });
+	// Middleware
+	// TODO: Refactor this in favor of fastify-cors
+	app.use(cors());
+	app.get("/profiles", async (req, reply) => {
+		let profiles = await app.db.mp.find({
+			relations: {
+				user: true,
+			},
+		});
+		reply.send(profiles);
+	});
 }
 
 // 	/**
