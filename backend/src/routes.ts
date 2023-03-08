@@ -13,13 +13,40 @@ export async function planner_routes(app: FastifyInstance): Promise<void> {
 	// Middleware
 	// TODO: Refactor this in favor of fastify-cors
 	app.use(cors());
-	app.get("/profiles", async (req, reply) => {
-		let profiles = await app.db.mp.find({
+
+	//GET all users
+	app.get("/users", async (req, reply) => {
+		let users = await app.db.user.find();
+		reply.send(users);
+	});
+
+	//TODO: check if any needs to be removed
+	//GET mealplans for a particular user
+	app.get("/mealplan/:userid", async (req: any, reply) => {
+		const userid = req.params.userid;
+		let mealPlan = await app.db.mp.find({
 			relations: {
-				user: true,
+				recipe: true,
+			},
+			where: {
+				user: {
+					id: userid,
+				},
 			},
 		});
-		reply.send(profiles);
+		reply.send(mealPlan);
+	});
+
+	//GET all recipe
+	app.get("/recipes", async (req, reply) => {
+		let recipe = await app.db.rp.find();
+		reply.send(recipe);
+	});
+
+	//GET all recipe for a particular Cuisine
+	app.get("/recipe/:cuisine", async (req: any, reply) => {
+		let recipe = await app.db.rp.find();
+		reply.send(recipe);
 	});
 }
 
