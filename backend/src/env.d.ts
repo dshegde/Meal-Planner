@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 
 // Typecheck our Env file! Safety (and verbosity) abound
-import {Vitest} from "vitest";
+import { Vitest } from "vitest";
 
 interface ImportMetaEnv {
 	readonly VITE_APP_TITLE: string;
@@ -13,6 +13,8 @@ interface ImportMetaEnv {
 	readonly VITE_DB_USER: string;
 	readonly VITE_DB_PASS: string;
 	readonly VITE_DB_NAME: string;
+	readonly VITE_AUTH0_AUDIENCE: string;
+	readonly VITE_AUTH0_DOMAIN: string;
 }
 
 interface ImportMeta {
