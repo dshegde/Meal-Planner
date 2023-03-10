@@ -48,12 +48,10 @@ export class MealPlansSeeder extends Seeder {
 			let user = users[i];
 			for (let j = 1; j < 8; j++) {
 				let dayOfWeek = DayOfWeek[j];
-				let mealID = j;
 				for (let j = 0; j < 3; j++) {
 					let mealplan = new MealPlans();
 					mealplan.user = user;
 					mealplan.dayOfWeek = dayOfWeek;
-					mealplan.mealId = mealID;
 					let recipe = await Recipes.find();
 					mealplan.recipe = recipe[GenerateRandomNumber(recipe.length - 1)];
 					switch (j) {
@@ -71,43 +69,6 @@ export class MealPlansSeeder extends Seeder {
 				}
 			}
 		}
-
-		// for (let i = 0; i < users.length; i++) {
-		// 	let mealID = i;
-		// 	let dayOfWeek = DayOfWeek[GenerateRandomNumber(7)];
-		// 	let user = users[i];
-		// 	// let recipe = rp[i];
-		// 	for (let j = 0; j < 3; j++) {
-		// 		let mealplan = new MealPlans();
-		// 		mealplan.user = user;
-		// 		mealplan.dayOfWeek = dayOfWeek;
-		// 		mealplan.mealId = mealID;
-		// 		let recipe = await Recipes.find();
-		// 		mealplan.recipe = recipe[GenerateRandomNumber(recipe.length - 1)];
-		// 		switch (j) {
-		// 			case 0:
-		// 				mealplan.mealType = "breakfast";
-		// 				break;
-		// 			case 1:
-		// 				mealplan.mealType = "lunch";
-		// 				break;
-		// 			case 2:
-		// 				mealplan.mealType = "dinner";
-		// 				break;
-		// 			default:
-		// 				mealplan.mealType = "breakfast";
-		// 				break;
-		// 		}
-
-		// 		try {
-		// 			await mealplan.save();
-		// 		} catch (err) {
-		// 			console.log("err", err);
-		// 		}
-		// 	}
-
-		// 	app.log.info("Finished seeding MealPlans!");
-		// }
 	}
 }
 export const MealPlansSeed = new MealPlansSeeder();
