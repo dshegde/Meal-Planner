@@ -13,6 +13,7 @@ import { Recipes } from "./db/models/recipes";
 import { Ingredients } from "./db/models/ingredients";
 import { RecipeIngredientRel } from "./db/models/recipe_ingredient_rel";
 import { MealPlans } from "./db/models/meal_plans";
+import { ShoppingList } from "./db/models/shopping_list";
 
 /**
  * App plugin where we construct our routes
@@ -159,12 +160,13 @@ export async function planner_routes(app: FastifyInstance): Promise<void> {
   });
 
   //GET shoppingList for a user
-  // need to return ing name too 
+  // need to return ing name too - done
   app.get("/shoppingList/:userid", async (req: any, reply) => {
     const userid = req.params.userid;
     let shoppingList = await app.db.sl.find({
       relations: {
         user: true,
+        ing: true,
       },
       where: {
         user: {
@@ -196,7 +198,7 @@ export async function planner_routes(app: FastifyInstance): Promise<void> {
     reply.send(user);
   });
 
-  //DELETE mealplans for a particular user 
+  //DELETE all mealplans for a particular user
   app.delete("/mealplan/:userid", async (req: any, reply) => {
     const userid = req.params.userid;
     console.log(userid);
@@ -210,34 +212,198 @@ export async function planner_routes(app: FastifyInstance): Promise<void> {
     reply.send(result);
   });
 
-  //DELETE mealplan for a user based on dayOfWeek -> doesnt work
-  app.delete("/mealplan/:userid/:dayOfWeek", async (req: any, reply) => {
-    const userid = req.params.userid;
-    const dayOfWeek = req.params.dayOfWeek;
-    let mealPlan = await app.db.mp.find({
-      relations: {
-        recipe: true,
-      },
-      where: {
-        user: {
-          id: userid,
-        },
-        dayOfWeek: dayOfWeek,
-      },
-    });
-    if (mealPlan.length == 0) {
-      let errMsg = {
-        error: `user with ${userid} does not have a meal plan for ${dayOfWeek}`,
-      };
-      reply.status(404).send(errMsg);
-    } else {
-      reply.send(mealPlan);
+  //DELETE a mealplans for a particular user based on dayOfWeek and mealType
+  app.delete(
+    "/mealplan/:userid/:dayOfWeek/:mealType",
+    async (req: any, reply) => {
+      const { userid, dayOfWeek, mealType } = req.params;
+      const query = app.db.mp
+        .createQueryBuilder("mp")
+        .where("userId = :id", { id: userid })
+        .andWhere("dayOfWeek = :dayOfWeek", { dayOfWeek: dayOfWeek })
+        .andWhere("mealType = :mealType", { mealType: mealType })
+        .delete()
+        .execute();
+      const result: any = await query;
+      console.log("Res is: ", result);
+      reply.send(result);
     }
+  );
+
+  //DELETE mealplan for a user based on dayOfWeek
+  app.delete("/mealplan/:userid/:dayOfWeek", async (req: any, reply) => {
+    const { userid, dayOfWeek } = req.params;
+    const query = app.db.mp
+      .createQueryBuilder("mp")
+      .where("userId = :id", { id: userid })
+      .andWhere("dayOfWeek = :dayOfWeek", { dayOfWeek: dayOfWeek })
+      .delete()
+      .execute();
+    const result: any = await query;
+    console.log("Res is: ", result);
+    reply.send(result);
   });
 
   /*----------------------------------- END of DELETE ROUTES----------------------------------- */
 
   /*----------------------------------- START of PUT ROUTES----------------------------------- */
+  //PUT ingredient's checked status to true for a users shopping list
+  app.put<{
+    Body: {
+      userId: number;
+      ingredientId: number;
+    };
+    Reply: any;
+  }>("/shoppinglist", async (req: any, reply: FastifyReply) => {
+    const { userId, ingredientId } = req.body;
+    if (!userId || !ingredientId) {
+      let errMsg = {
+        error: "userId and ingredientId are required",
+      };
+      reply.status(400).send(errMsg);
+    } else {
+      let user = await app.db.user.findOne({
+        where: {
+          id: userId,
+        },
+      });
+      let ingredient = await app.db.ig.findOne({
+        where: {
+          id: ingredientId,
+        },
+      });
+      if (!user || !ingredient) {
+        let errMsg = {
+          error: "User or Ingredient does not exist",
+        };
+        reply.status(404).send(errMsg);
+      } else {
+        let ShopListItem = await app.db.sl.findOne({
+          where: {
+            check: false,
+            user: {
+              id: userId,
+            },
+            ing: {
+              id: ingredientId,
+            },
+          },
+        });
+        if (!ShopListItem) {
+          let errMsg = {
+            error: `User doesnt have this ingredient in their shopping list`,
+          };
+          reply.status(404).send(errMsg);
+        } else {
+          ShopListItem.check = true;
+          let res = await ShopListItem.save();
+          reply.send(res);
+        }
+      }
+    }
+  });
+  // PUT exisitng mealplan for a user to update the recipe
+  app.put<{
+    Body: {
+      userId: number;
+      mealType: string;
+      dayOfWeek: string;
+      recipeId: number;
+    };
+    Reply: any;
+  }>("/mealplan", async (req: any, reply: FastifyReply) => {
+    var mealTypeOptions = ["breakfast", "lunch", "dinner", "snack"];
+    var dayOfWeekOptions = [
+      "monday",
+      "tuesday",
+      "wednesday",
+      "thursday",
+      "friday",
+      "saturday",
+      "sunday",
+    ];
+    const { userId, mealType, dayOfWeek, recipeId } = req.body;
+    if (!userId || !mealType || !dayOfWeek || !recipeId) {
+      // there has to be a better check to see if mealType and dayOfWeek are valid
+      let errMsg = {
+        error: "userId, mealType, dayOfWeek and recipeId are required",
+      };
+      reply.status(400).send(errMsg);
+    } else if (
+      !mealTypeOptions.includes(mealType) ||
+      !dayOfWeekOptions.includes(dayOfWeek)
+    ) {
+      let errMsg = {
+        error: "mealType and dayOfWeek must be valid",
+      };
+      reply.status(400).send(errMsg);
+    } else {
+      let user = await app.db.user.findOne({
+        where: {
+          id: userId,
+        },
+      });
+      let recipe = await app.db.rp.findOne({
+        where: {
+          id: recipeId,
+        },
+      });
+      if (!user || !recipe) {
+        let errMsg = {
+          error: "User or Recipe does not exist",
+        };
+        reply.status(404).send(errMsg);
+      } else {
+        let existingMealPlan = await app.db.mp.findOne({
+          where: {
+            user: {
+              id: userId,
+            },
+            dayOfWeek: dayOfWeek,
+            mealType: mealType,
+          },
+        });
+
+        if (existingMealPlan) {
+          existingMealPlan.recipe = recipe;
+          let res = await existingMealPlan.save();
+          reply.send(res);
+        } else {
+          let errMsg = {
+            error: `there doesnt exist a recipe for ${dayOfWeek} ${mealType} in this users userID:${userId}  meal plan. Please add this meal plan first `,
+          };
+          reply.status(400).send(errMsg);
+
+          let ings = await app.db.rpIngRel.find({
+            relations: {
+              ingredient: true,
+            },
+            where: {
+              recipe: {
+                id: recipeId,
+              },
+            },
+          });
+
+          let mealPlan = new MealPlans();
+          mealPlan.user = user;
+          mealPlan.mealType = mealType;
+          mealPlan.dayOfWeek = dayOfWeek;
+          mealPlan.recipe = recipe;
+          let res = await mealPlan.save();
+          for (let i = 0; i < ings.length; i++) {
+            let shoppingList = new ShoppingList();
+            shoppingList.user = user;
+            shoppingList.ing = ings[i].ingredient;
+            let res = await shoppingList.save();
+            console.log(res);
+          }
+
+          reply.send(res);
+        }
+      }
+    }
+  });
 
   /*----------------------------------- START of PUT ROUTES----------------------------------- */
 
@@ -372,7 +538,7 @@ export async function planner_routes(app: FastifyInstance): Promise<void> {
     if (!userId || !mealType || !dayOfWeek || !recipeId) {
       // there has to be a better check to see if mealType and dayOfWeek are valid
       let errMsg = {
-        error: "userId,mealType,dayOfWeek and recipeId are required",
+        error: "userId, mealType, dayOfWeek and recipeId are required",
       };
       reply.status(400).send(errMsg);
     } else if (
@@ -384,7 +550,6 @@ export async function planner_routes(app: FastifyInstance): Promise<void> {
       };
       reply.status(400).send(errMsg);
     } else {
-      let mealPlan = new MealPlans();
       let user = await app.db.user.findOne({
         where: {
           id: userId,
@@ -417,11 +582,126 @@ export async function planner_routes(app: FastifyInstance): Promise<void> {
           };
           reply.status(400).send(errMsg); //is this the right status code?
         } else {
+          let ings = await app.db.rpIngRel.find({
+            relations: {
+              ingredient: true,
+            },
+            where: {
+              recipe: {
+                id: recipeId,
+              },
+            },
+          });
+          // console.log(ings);
+
+          let mealPlan = new MealPlans();
           mealPlan.user = user;
           mealPlan.mealType = mealType;
           mealPlan.dayOfWeek = dayOfWeek;
           mealPlan.recipe = recipe;
           let res = await mealPlan.save();
+          for (let i = 0; i < ings.length; i++) {
+            let shoppingList = new ShoppingList();
+            shoppingList.user = user;
+            shoppingList.ing = ings[i].ingredient;
+            let res = await shoppingList.save();
+            console.log(res);
+          }
+
+          reply.send(res);
+        }
+      }
+    }
+  });
+  //test get route - should be deleted later
+  app.get("/test", async (req: any, reply: FastifyReply) => {
+    let recipeId = 1;
+    // find all ingredients for a recipe
+    // let ings = await app.db.rpIngRel.find({
+    //   relations: {
+    //     ingredient: true,
+    //     recipe: true,
+    //   },
+    //   where: {
+    //     recipe: {
+    //       id: recipeId,
+    //     },
+    //   },
+    // });
+    let userId = 23;
+    // let ingredientId = 10;
+    let ShopListItem = await app.db.sl.find({
+      relations: {
+        user: true,
+        ing: true,
+      },
+      where: {
+        check: false,
+        user: {
+          id: userId,
+        },
+        // ing: {
+        //   id: ingredientId,
+        // },
+      },
+    });
+    reply.send(ShopListItem);
+  });
+
+  //POST ingredient to a users shopping list
+  app.post<{
+    Body: {
+      userId: number;
+      ingredientId: number;
+    };
+    Reply: any;
+  }>("/shoppinglist", async (req: any, reply: FastifyReply) => {
+    const { userId, ingredientId } = req.body;
+    if (!userId || !ingredientId) {
+      let errMsg = {
+        error: "userId and ingredientId are required",
+      };
+      reply.status(400).send(errMsg);
+    } else {
+      let user = await app.db.user.findOne({
+        where: {
+          id: userId,
+        },
+      });
+      console.log("This is the user" + user);
+      let ingredient = await app.db.ig.findOne({
+        where: {
+          id: ingredientId,
+        },
+      });
+      if (!user || !ingredient) {
+        let errMsg = {
+          error: "User or Ingredient does not exist",
+        };
+        reply.status(404).send(errMsg);
+      } else {
+        let ShopListItem = await app.db.sl.find({
+          where: {
+            check: false,
+            user: {
+              id: userId,
+            },
+            ing: {
+              id: ingredientId,
+            },
+          },
+        });
+        if (ShopListItem !== null && ShopListItem.length > 0) {
+          let errMsg = {
+            error: `User already has this ingredient in their shopping list`,
+          };
+          reply.status(400).send(errMsg);
+        } else {
+          let shoppingList = new ShoppingList();
+          shoppingList.user = user;
+          shoppingList.ing = ingredient;
+          //not setting checked cause it is false by default
+          let res = await shoppingList.save();
           reply.send(res);
         }
       }
@@ -430,177 +710,3 @@ export async function planner_routes(app: FastifyInstance): Promise<void> {
 
   /*----------------------------------- END of POST ROUTES----------------------------------- */
 }
-
-// 	/**
-// 	 * Route replying to /test path for test-testing
-// 	 * @name get/test
-// 	 * @function
-// 	 */
-// 	app.get("/test", async (request: FastifyRequest, reply: FastifyReply) => {
-// 		reply.send("GET Test");
-// 	});
-
-// 	/**
-// 	 * Route serving login form.
-// 	 * @name get/users
-// 	 * @function
-// 	 */
-// 	app.get("/users", async (request: FastifyRequest, reply: FastifyReply) => {
-// 		// This will return all users along with their associated profiles and ip histories via relations
-// 		// https://typeorm.io/find-options
-// 		let users = await app.db.user.find({
-// 			// This allows you to define which fields appear/do not appear in your result.
-// 			select: {
-// 				id: true,
-// 				name: true,
-// 				email: true,
-// 				updated_at: true,
-// 				created_at: false,
-// 			},
-// 			// This defines which of our OneToMany/ManyToMany relations we want to return along with each user
-// 			relations: {
-// 				profiles: true,
-// 				ips: {
-// 					// We don't need to return user as a part of ip_history because we already know the user
-// 					user: false
-// 				},
-// 			},
-// 			where: {
-// 				// This will filter our results only to users with an id less than 70.  How cute is this?!?
-// 				id: LessThan(70),
-// 				profiles: {
-// 					// People who name their dog this deserve to be left out, and people naming other species this definitely do
-// 					// No offense, people with pets named spot
-// 					name: Not(ILike("spot")),
-// 				}
-// 			}
-// 		});
-// 		reply.send(users);
-// 	});
-
-// 	// CRUD impl for users
-// 	// Create new user
-
-// 	// Appease fastify gods
-// 	const post_users_opts: RouteShorthandOptions = {
-// 		schema: {
-// 			body: {
-// 				type: 'object',
-// 				properties: {
-// 					name: {type: 'string'},
-// 					email: {type: 'string'}
-// 				}
-// 			},
-// 			response: {
-// 				200: {
-// 					type: 'object',
-// 					properties: {
-// 						user: {type: 'object'},
-// 						ip_address: {type: 'string'}
-// 					}
-// 				}
-// 			}
-// 		}
-// 	};
-
-// 	/**
-// 	 * Route allowing creation of a new user.
-// 	 * @name post/users
-// 	 * @function
-// 	 * @param {string} name - user's full name
-// 	 * @param {string} email - user's email address
-// 	 * @returns {IPostUsersResponse} user and IP Address used to create account
-// 	 */
-// 	app.post<{
-// 		Body: IPostUsersBody,
-// 		Reply: IPostUsersResponse
-// 	}>("/users", post_users_opts, async (req, reply: FastifyReply) => {
-
-// 		const {name, email} = req.body;
-
-// 		const user = new User();
-// 		user.name = name;
-// 		user.email = email;
-
-// 		const ip = new IPHistory();
-// 		ip.ip = req.ip;
-// 		ip.user = user;
-// 		// transactional, transitively saves user to users table as well IFF both succeed
-// 		await ip.save();
-
-// 		//manually JSON stringify due to fastify bug with validation
-// 		// https://github.com/fastify/fastify/issues/4017
-// 		await reply.send(JSON.stringify({user, ip_address: ip.ip}));
-// 	});
-
-// 	// PROFILE Route
-// 	/**
-// 	 * Route listing all current profiles
-// 	 * @name get/profiles
-// 	 * @function
-// 	 */
-// 	app.get("/profiles", async (req, reply) => {
-// 		let profiles = await app.db.profile.find();
-// 		reply.send(profiles);
-// 	});
-
-// 	app.post("/profiles", async (req: any, reply: FastifyReply) => {
-
-// 		const {name} = req.body;
-
-// 		const myUser = await app.db.user.findOneByOrFail({});
-
-// 	  const newProfile = new Profile();
-// 	  newProfile.name = name;
-// 		newProfile.picture = "ph.jpg";
-// 		newProfile.user = myUser;
-
-// 		await newProfile.save();
-
-// 		//manually JSON stringify due to fastify bug with validation
-// 		// https://github.com/fastify/fastify/issues/4017
-// 		await reply.send(JSON.stringify(newProfile));
-// 	});
-
-// 	app.delete("/profiles", async (req: any, reply: FastifyReply) => {
-
-// 		const myProfile = await app.db.profile.findOneByOrFail({});
-// 		let res = await myProfile.remove();
-
-// 		//manually JSON stringify due to fastify bug with validation
-// 		// https://github.com/fastify/fastify/issues/4017
-// 		await reply.send(JSON.stringify(res));
-// 	});
-
-// 	app.put("/profiles", async(request, reply) => {
-// 		const myProfile = await app.db.profile.findOneByOrFail({});
-
-// 		myProfile.name = "APP.PUT NAME CHANGED";
-// 		let res = await myProfile.save();
-
-// 		//manually JSON stringify due to fastify bug with validation
-// 		// https://github.com/fastify/fastify/issues/4017
-// 		await reply.send(JSON.stringify(res));
-// 	});
-
-// }
-
-// // Appease typescript request gods
-// interface IPostUsersBody {
-// 	name: string,
-// 	email: string,
-// }
-
-// /**
-//  * Response type for post/users
-//  */
-// export type IPostUsersResponse = {
-// 	/**
-// 	 * User created by request
-// 	 */
-// 	user: User,
-// 	/**
-// 	 * IP Address user used to create account
-// 	 */
-// 	ip_address: string
-// }
