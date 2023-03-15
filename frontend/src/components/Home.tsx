@@ -21,36 +21,7 @@ export function DashboardImage() {
 	return (<div><img className="image" src={myImage} alt="myImage" /></div>)
 }
 
-// export function NavMain() {
-// 	return (
-// 		<>
-// 			<PublicLinksView/>
-// 			<NavRoutes/>
-// 		</>
-// 	);
-// }
 
-// function PublicLinksView() {
-// 	return (
-// 		<>
-// 			<Link to="/">Home</Link>
-//       		<Link to="/users">Users</Link>
-// 			<Link to="/recipes">Recipes</Link>
-// 			<Link to="/mealplan">MealPlan</Link>
-// 		</>
-// 	)
-// }
-
-// function NavRoutes() {
-// 	return (
-// 		<Routes>
-// 			<Route path="/users" element={<Users/>}/>
-// 			<Route path="/recipes" element={<Recipes/>}/>
-// 			<Route path="/mealplan" element={<DropdownMenu/>}/>
-// 			<Route path="/" element={<Home/>}/>
-// 		</Routes>
-// 	);
-// }
 
 
 

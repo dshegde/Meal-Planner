@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
+
 export const Recipes = () => {
 	const [recipes, setRecipes] = useState([]);
 
@@ -23,7 +24,6 @@ export const Recipes = () => {
               <table>
                 <thead>
                   <tr>
-                    <th>Recipe ID</th>
                     <th>Recipe Name</th>
                     <th>Diet Type</th>
                     <th>Cuisine</th>
