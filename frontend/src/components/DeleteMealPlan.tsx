@@ -6,24 +6,24 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { useEffect, useState } from 'react';
 import DropdownButton from 'react-bootstrap/DropdownButton';
+import axios from 'axios';
 
 export const MealPlanForm = () => {
     const [mealtype, setMealtype] = useState([]);
     const [day, setDay] = useState([]);
-    const [userID, setUserID] = useState([]);
     const [mealPlanAll, setMealPlanAll] = useState(false);
+    
 
     const handleSubmit = (e) => {
-        if(userID == null) {
-            alert("Please enter a user ID");
-        }
-        else if(mealtype == null && day == null) {
-            setMealPlanAll(true);
-
-        }
-        else {
-            alert(day);
-        }
+        useEffect(() => {
+            const getMealPlans = async () => {
+                const mealplan = await axios.delete(
+                    "http://localhost:8080//mealplan/11/" + day.toString() + "/" + mealtype.toString()
+                );
+            };
+            void getMealPlans();
+        }, [day, mealtype]);
+        setMealPlanAll(true);
     }
     const handleMealType=(e)=>{
       console.log(e);
@@ -32,26 +32,14 @@ export const MealPlanForm = () => {
     const handleDay=(e)=>{
         console.log(e);
         setDay(e)
-        alert(day);
     }
-    const handleUserID=(e)=>{
-        console.log(e);
-        setUserID(e.target.value)
-    }
+
 return (
    <>
     <Form onSubmit={handleSubmit}>
         <Row>
             <Col>
-                <Form.Group controlId="formBasicEmail">
-                    <Form.Label>Enter user: </Form.Label>
-                    <Form.Control type="text" placeholder="userID" onChange={handleUserID}/>
-                    <h4>You selected {userID}</h4>
-                </Form.Group>
-            </Col>
-            <Col>
                 <DropdownButton title="Meal Type" onSelect={handleMealType}>
-                    <Dropdown.Item>All</Dropdown.Item>
                     <Dropdown.Item eventKey="breakfast">Breakfast</Dropdown.Item>
                     <Dropdown.Item eventKey="lunch">Lunch</Dropdown.Item>
                     <Dropdown.Item eventKey="dinner">Dinner</Dropdown.Item>
@@ -60,7 +48,6 @@ return (
             </Col>
             <Col>
                 <DropdownButton title="Day of Week" onSelect={handleDay}>
-                    <Dropdown.Item>All</Dropdown.Item>
                     <Dropdown.Item eventKey="monday">Monday</Dropdown.Item>
                     <Dropdown.Item eventKey="tuesday">Tuesday</Dropdown.Item>
                     <Dropdown.Item eventKey="wednesday">Wednesday</Dropdown.Item>
@@ -73,59 +60,38 @@ return (
             </Col>
             <Col>
                 <Button variant="primary" type="submit">
-                    Get Meal Plan
-                </Button>
-            </Col>
-            <Col>
-                <Button variant="primary" type="button">
                     Delete Meal Plan
                 </Button>
             </Col>
         </Row>
     </Form>
-    { mealPlanAll ? MealPlanForUser1() : null}
+    { mealPlanAll ? <h1>Deleted</h1> : null}
     </>
 );
 }
 
-const MealPlanForUser1 = () => {
-    // const [mealplanforuser1, setmealplanforuser1] = useState([]);
-    // // const [userid, setuserid] = useState(userID);
-	// useEffect(() => {
-	// 	const getMealPlans1 = async () => {
-	// 		const mealplan = await axios.get(
-	// 			"http://localhost:8080/mealplan/11"
-	// 		);
+// function DeleteMealPlanForUser(day, mealtype) {
+//     const [Day, setDay] = useState(day);
+//     setDay(day);
+//     const [MealType, setMealType] = useState(mealtype);
+//     setMealType(mealtype);
+// 	useEffect(() => {
+// 		const getMealPlans = async () => {
+// 			const mealplan = await axios.get(
+// 				"http://localhost:8080//mealplan/11/" + Day + "/" + MealType
+// 			);
+// 		};
+// 		void getMealPlans();
+// 	}, [Day, MealType]);
 
-	// 		setmealplanforuser1(await mealplan.data);
-	// 	};
-	// 	void getMealPlans1();
-	// }, []);
+//     return (
+//         // alert("Meal Plan Succesfully Deleted!")
+//         <>
+//         <h1>Meal Plan Succesfully Deleted!</h1>
+//         </>
+//     );
 
-    return (
-        <>
-        <table>
-                <thead>
-                  <tr>
-                    <th>Meal Type</th>
-                    <th>Day</th>
-                    <th>Recipe</th>
-                  </tr>
-                </thead>
-                {/* <tbody>
-                  {mealplanforuser1.map(mp => (
-                    <tr key={mp.id}>
-                      <td>{mp.mealType}</td>
-                      <td>{mp.dayOfWeek}</td>
-                      <td>{mp.recipe.recipeName}</td>
-                    </tr>
-                  ))}
-                </tbody> */}
-              </table>
-              </>
-    );
-
-};
+// };
 
 
   

@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
+import { Card, Table } from 'react-bootstrap';
 
 export const Recipes = () => {
 	const [recipes, setRecipes] = useState([]);
@@ -20,37 +21,33 @@ export const Recipes = () => {
 		void getRecipes();
 	}, []);
 
-	return (
-              <table>
-                <thead>
-                  <tr>
-                    <th>Recipe Name</th>
-                    <th>Diet Type</th>
-                    <th>Cuisine</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {recipes.map(recipe => (
-                    <tr key={recipe.id}>
-                      <td>{recipe.recipeName}</td>
-                      <td>{recipe.dietType}</td>
-                      <td>{recipe.cuisine}</td>
-                      <td>{recipe.description}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-    );
+  return(
+    <Card className="mt-3">
+  <Card.Body>
+    <Card.Title>Meal Plan</Card.Title>
+    <Table striped bordered hover>
+      <thead>
+        <tr>
+        <th>Recipe Name</th>
+        <th>Diet Type</th>
+        <th>Cuisine</th>
+        <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        {recipes.map((recipe) => (
+          <tr key={recipe.id}>
+            <td>{recipe.recipeName}</td>
+            <td>{recipe.dietType}</td>
+            <td>{recipe.cuisine}</td>
+            <td>{recipe.description}</td>
+          </tr>
+        ))}
+      </tbody>
+    </Table>
+  </Card.Body>
+</Card>
+)
 
-  
-    // return (
-    //   <div>
-    //     <h2>Recipes:</h2>
-    //     {    recipes ?
-    //       <ul>{recipes.map((recipe: {recipeName: string, dietType: string, cuisine: string, description: string}) => <li key={recipe.recipeName.toString()}>{recipe.recipeName} - {recipe.dietType} -{recipe.cuisine} - {recipe.description}</li>)}</ul>
-    //       : null
-    //     }
-    //   </div> );
   
 };

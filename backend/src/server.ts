@@ -9,6 +9,7 @@ import { getDirName } from "./lib/helpers";
 import logger from "./lib/logger";
 import { planner_routes } from "./routes";
 import DbPlugin from "./plugins/database";
+import cors from "@fastify/cors";
 
 /**
  * This is our main "Create App" function.  Note that it does NOT start the server, this only creates it
@@ -25,6 +26,24 @@ export async function buildApp(useLogging: boolean) {
 		: Fastify({ logger: false });
 
 	try {
+
+		await app.register(cors, {
+			origin: (origin, cb) => {
+				// If we're in dev mode, no CORS necessary, let *everything* pass
+				if (import.meta.env.DEV) {
+					cb(null, true);
+					return;  }
+				const hostname = new URL(origin).hostname;
+				// Otherwise check to see if hostnames match, or are local connections and allow those too
+				if (hostname === "localhost" || hostname === '127.0.0.1' || hostname === import.meta.env.VITE_IP_ADDR) {
+					//  Request from localhost will pass
+					cb(null, true);
+					return;  }
+				// Generate an error on other origins, disabling access
+				cb(new Error("Not allowed"), false);
+			}
+		});
+
 		// add express-like 'app.use' middleware support
 		await app.register(fastifyMiddie);
 
