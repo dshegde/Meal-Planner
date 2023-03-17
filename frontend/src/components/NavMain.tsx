@@ -10,7 +10,6 @@ import "../Dashboard.css";
 import { MealPlanForUser } from "./MealPlanAllUsers";
 import { MealPlanForDay } from "./MealPlanDay";
 import { ShoppingList } from "./ShoppingList";
-import { RecipeSearch } from "./SearchRecipe";
 import { PostMealPlanForm } from "./PostMealPlan";
 
 

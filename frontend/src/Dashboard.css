@@ -2,3 +2,11 @@
     height: 200px;
     width: 500px;
 }
+
+.postMP {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 200px;
+}

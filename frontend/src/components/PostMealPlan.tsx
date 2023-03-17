@@ -7,6 +7,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import { Card, Table } from 'react-bootstrap';
 import axios from 'axios';
+import "../Dashboard.css";
 
 export const PostMealPlanForm = () => {
   const [mealType, setMealType] = useState([]);
@@ -77,13 +78,13 @@ export const PostMealPlanForm = () => {
     </Row>
     <Row>
         <Form.Group controlId="RecipeID">
-            <Form.Label>Enter recipe ID: </Form.Label>
-            <Form.Control type="text" placeholder="recipeID" onChange={handleRecipeID}/>
+            <Form.Label className='mt-5'>Enter recipe ID: </Form.Label>
+            <Form.Control className='mx-auto postMP' type="text" placeholder="recipeID" onChange={handleRecipeID}/>
             <h4>You selected {recipeID}</h4>
         </Form.Group>
     </Row>
     <Row>
-    <Button variant="primary" type="submit" onClick={handleSubmit}>
+    <Button className='mx-auto mt-5 postMP' variant="primary" size='lg' type="submit" onClick={handleSubmit}>
                     Post Meal Plan
     </Button>
     </Row>
@@ -94,7 +95,7 @@ export const PostMealPlanForm = () => {
 
 const PostSuccess = () => {
     return(
-        <Card>
+        <Card className='mt-5'>
             <h1>Success!</h1>
         </Card>
     );
