@@ -21,7 +21,7 @@ export const MealPlanForDay = () => {
 	useEffect(() => {
 		const getMP = async () => {
 			const mealplan = await axios.get(
-				"http://localhost:8080/mealplan/11/" + day.toString()
+				"http://localhost:8080/mealplan/13/" + day.toString()
 			);
 
 			setmealplanforuser(await mealplan.data);
