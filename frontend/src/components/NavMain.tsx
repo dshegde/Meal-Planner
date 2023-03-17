@@ -57,8 +57,13 @@ function PublicLinksView() {
             </NavDropdown>
           </Nav>
           <Nav>
-            <Nav.Link>Login</Nav.Link>
-            <Nav.Link>Logout</Nav.Link>
+            <Button variant="outline-primary" onClick={LoginFunc}>
+              Login
+            </Button>
+
+            <Button variant="outline-secondary" onClick={LogOutFunc}>
+              Logout
+            </Button>
           </Nav>
         </Navbar.Collapse>
       </Container>
@@ -90,4 +95,12 @@ function NavRoutes() {
       <Route path="/shoppinglist" element={<ShoppingList />} />
     </Routes>
   );
+}
+
+function LoginFunc() {
+  window.location.href = "http://localhost:3000/login";
+}
+
+function LogOutFunc() {
+  window.location.href = "http://localhost:3000/logout";
 }
