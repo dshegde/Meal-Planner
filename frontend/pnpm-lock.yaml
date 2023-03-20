@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@auth0/auth0-react': ^2.0.1
   '@popperjs/core': ^2.11.6
   '@testing-library/dom': ^9.0.0
   '@testing-library/jest-dom': ^5.16.5
@@ -14,6 +15,7 @@ specifiers:
   '@vitejs/plugin-react': ^3.0.0
   axios: ^1.3.4
   bootstrap: ^5.2.3
+  js-cookie: ^3.0.1
   jsdom: ^21.0.0
   msw: ^1.1.0
   react: ^18.2.0
@@ -26,9 +28,11 @@ specifiers:
   vitest: ^0.27.1
 
 dependencies:
+  '@auth0/auth0-react': 2.0.1_biqbaboplfbrettd7655fr4n2y
   '@popperjs/core': 2.11.6
   axios: 1.3.4
   bootstrap: 5.2.3_@popperjs+core@2.11.6
+  js-cookie: 3.0.1
   react: 18.2.0
   react-bootstrap: 2.7.2_ib3m5ricvtkl2cll7qpr2f6lvq
   react-bootstrap-dropdown: 0.3.0
@@ -65,6 +69,21 @@ packages:
       '@jridgewell/gen-mapping': 0.1.1
       '@jridgewell/trace-mapping': 0.3.17
     dev: true
+
+  /@auth0/auth0-react/2.0.1_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-7Rla3del7inUloaWMsECs0JvBpDEj9lgfy+BQE/Z75zs9tveNvxab+xFdfrBC0GPN0eoiq1PeHcc++YjLnti+g==}
+    peerDependencies:
+      react: ^16.11.0 || ^17 || ^18
+      react-dom: ^16.11.0 || ^17 || ^18
+    dependencies:
+      '@auth0/auth0-spa-js': 2.0.4
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+    dev: false
+
+  /@auth0/auth0-spa-js/2.0.4:
+    resolution: {integrity: sha512-NgD6Fkm5Xnbned1VjhEW8irm1/Y8AWtdSLexgLXNwwBVgfnYicCVBu8w75m2t+4QljXkTcI7IXVEFhVmxMuxaA==}
+    dev: false
 
   /@babel/code-frame/7.18.6:
     resolution: {integrity: sha512-TDCmlK5eOvH+eH7cdAFlNXeVJqWIQ7gW9tY1GJIpUtFb6CmjVyq2VM3u71bOyR8CRihcCgMUYoDNyLXao3+70Q==}
@@ -1890,6 +1909,11 @@ packages:
       graceful-fs: 4.2.10
       picomatch: 2.3.1
     dev: true
+
+  /js-cookie/3.0.1:
+    resolution: {integrity: sha512-+0rgsUXZu4ncpPxRL+lNEptWMOWl9etvPHc/koSRp6MPwpRYAhmk0dUG00J4bxVV3r9uUzfo24wW0knS07SKSw==}
+    engines: {node: '>=12'}
+    dev: false
 
   /js-levenshtein/1.1.6:
     resolution: {integrity: sha512-X2BB11YZtrRqY4EnQcLX5Rh373zbK4alC1FW7D7MBhL2gtcC17cTnr6DmfHZeS0s2rTHjUTMMHfG7gO8SSdw+g==}

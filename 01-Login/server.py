@@ -7,7 +7,7 @@ from urllib.parse import quote_plus, urlencode
 
 from authlib.integrations.flask_client import OAuth
 from dotenv import find_dotenv, load_dotenv
-from flask import Flask, redirect, render_template, session, url_for
+from flask import Flask, make_response, redirect, render_template, session, url_for
 
 ENV_FILE = find_dotenv()
 if ENV_FILE:
@@ -43,9 +43,22 @@ def home():
 @app.route("/callback", methods=["GET", "POST"])
 def callback():
     token = oauth.auth0.authorize_access_token()
+   
     session["user"] = token
+    print(session)
+    # response = make_response('Cookie set!')
+    # response.set_cookie('my-cookie', token)
     # return redirect("/")
-    return redirect("http://localhost:5173/users")
+    # response = make_response(redirect('http://localhost:5173/users'))
+    # response.headers['Content-Type'] = 'application/json'
+    # response.headers['Access-Control-Allow-Origin'] = '*'
+    # response.set_data(json.dumps(token))
+    resp = make_response(redirect('http://localhost:5173/users'))
+    resp.set_cookie('user_id', token['token_type'])
+    return resp
+    # return response
+
+    # return redirect("http://localhost:5173/users")
 
 
 @app.route("/login")
