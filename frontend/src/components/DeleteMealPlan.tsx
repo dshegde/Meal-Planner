@@ -7,12 +7,15 @@ import Col from 'react-bootstrap/Col';
 import { useEffect, useState } from 'react';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import axios from 'axios';
+import Cookies from "js-Cookie";
+
 
 export const MealPlanForm = () => {
     const [mealType, setMealtype] = useState([]);
     const [dayOfWeek, setDay] = useState([]);
     const [mealPlanAll, setMealPlanAll] = useState(false);
-    
+    let user_id = Cookies.get("user_id").split('|')[1];
+	const [userID, setUserID] = useState(user_id);
 
     const handleSubmit = (e) => {
         setMealPlanAll(true);
@@ -20,11 +23,11 @@ export const MealPlanForm = () => {
         useEffect(() => {
             const getMealPlans = async () => {
                 const mealplan = await axios.delete(
-                    "http://localhost:8080/mealplan/11/" + dayOfWeek.toString() + "/" + mealType.toString()
+                    "http://localhost:8080/mealplan/" + userID.toString() + "/" + dayOfWeek.toString() + "/" + mealType.toString()
                 );
-            };
+            }; 
             void getMealPlans();
-        }, [dayOfWeek, mealType]);
+        }, [dayOfWeek, mealType, userID]);
         
     
     const handleMealType=(e)=>{

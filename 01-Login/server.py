@@ -1,6 +1,7 @@
 """Python Flask WebApp Auth0 integration example
 """
 
+from http import cookies
 import json
 from os import environ as env
 from urllib.parse import quote_plus, urlencode
@@ -43,22 +44,13 @@ def home():
 @app.route("/callback", methods=["GET", "POST"])
 def callback():
     token = oauth.auth0.authorize_access_token()
-   
     session["user"] = token
-    print(session)
-    # response = make_response('Cookie set!')
-    # response.set_cookie('my-cookie', token)
-    # return redirect("/")
-    # response = make_response(redirect('http://localhost:5173/users'))
-    # response.headers['Content-Type'] = 'application/json'
-    # response.headers['Access-Control-Allow-Origin'] = '*'
-    # response.set_data(json.dumps(token))
-    resp = make_response(redirect('http://localhost:5173/users'))
-    resp.set_cookie('user_id', token['token_type'])
+    resp = make_response(redirect('http://localhost:5173'))
+    temp = token['userinfo']
+    temp2 = temp['sub']
+    resp.set_cookie('user_id', temp2)
+    resp.set_cookie('user_token', token['access_token'])
     return resp
-    # return response
-
-    # return redirect("http://localhost:5173/users")
 
 
 @app.route("/login")
@@ -71,19 +63,10 @@ def login():
 @app.route("/logout")
 def logout():
     session.clear()
-    # return redirect(
-    #     "https://"
-    #     + env.get("AUTH0_DOMAIN")
-    #     + "/v2/logout?"
-    #     + urlencode(
-    #         {
-    #             "returnTo": url_for("home", _external=True),
-    #             "client_id": env.get("AUTH0_CLIENT_ID"),
-    #         },
-    #         quote_via=quote_plus,
-    #     )
-    # )
-    return redirect("http://localhost:5173")
+    resp = make_response(redirect('http://localhost:5173'))
+    resp.set_cookie('user_id', expires=0)
+    resp.set_cookie('user_token', expires=0)
+    return resp
 
 
 if __name__ == "__main__":

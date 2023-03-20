@@ -8,12 +8,15 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import { Card, Table } from 'react-bootstrap';
 import axios from 'axios';
 import "../Dashboard.css";
+import Cookies from "js-Cookie";
 
 export const PostMealPlanForm = () => {
   const [mealType, setMealType] = useState([]);
   const [day, setDay] = useState([]);
   const [recipeID, setRecipeID] = useState([]);
   const [check, setCheck] = useState(false);
+  let user_id = Cookies.get("user_id").split('|')[1];
+	const [userID, setUserID] = useState(user_id);
 
   const handleSubmit = (e) => {
     setCheck(true);
@@ -23,7 +26,7 @@ export const PostMealPlanForm = () => {
         
         const getMealPlans = async () => {
             const postData = {
-                userId: 11,
+                userId: userID.toString(),
                 mealType: mealType.toString(),
                 dayOfWeek: day.toString(),
                 recipeId: Number(recipeID),
@@ -39,7 +42,7 @@ export const PostMealPlanForm = () => {
               });
         };
         void getMealPlans();
-    }, [day, mealType, recipeID]);
+    }, [day, mealType, recipeID, userID]);
   
   const handleDay = (e) => {
     console.log(e);

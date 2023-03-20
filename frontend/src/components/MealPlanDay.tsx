@@ -6,13 +6,15 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import { Card, Table } from 'react-bootstrap';
 import { Form } from "react-router-dom";
-
+import Cookies from "js-Cookie";
 
 
 export const MealPlanForDay = () => {
     const [mealplanforuser, setmealplanforuser] = useState([]);
     const [day, setDay] = useState([]);
     const [dayState, setdayState] = useState(false);
+    let user_id = Cookies.get("user_id").split('|')[1];
+	  const [userID, setUserID] = useState(user_id);
     
     const handleDay = (e) => {
         setDay(e);
@@ -21,13 +23,13 @@ export const MealPlanForDay = () => {
 	useEffect(() => {
 		const getMP = async () => {
 			const mealplan = await axios.get(
-				"http://localhost:8080/mealplan/13/" + day.toString()
+				"http://localhost:8080/mealplan/" + userID.toString() + "/" + day.toString()
 			);
 
 			setmealplanforuser(await mealplan.data);
 		};
 		void getMP();
-	}, [day]);
+	}, [day, userID]);
 
 	return (
         <>
