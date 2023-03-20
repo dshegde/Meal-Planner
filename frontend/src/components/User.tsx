@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
 import Cookies from "js-Cookie";
+import { Card, Table } from 'react-bootstrap';
 
 export const Users = () => {
 	const [users, setUsers] = useState([]);
@@ -23,12 +24,37 @@ export const Users = () => {
 		void getUsers();
 	}, [userID]);
 
-	return (
-		<div>
-			<h2>Users:</h2>
-			{    users ?
-				<ul>{users.map((user: {email: string, name: string}) => <li key={user.email.toString()}>{user.name} - {user.email}</li>)}</ul>
-				: null
-			}
-		</div> );
+
+	return(
+        <Card className="mt-3">
+      <Card.Body>
+        <Card.Title>User Details</Card.Title>
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+            <th>Name</th>
+            <th>Email</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.map((user) => (
+              <tr key={user.id}>
+                <td>{user.name}</td>
+                <td>{user.email}</td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </Card.Body>
+    </Card>
+    )
+
+	// return (
+	// 	<div>
+	// 		<h2>Users:</h2>
+	// 		{    users ?
+	// 			<ul>{users.map((user: {email: string, name: string}) => <li key={user.email.toString()}>{user.name} - {user.email}</li>)}</ul>
+	// 			: null
+	// 		}
+	// 	</div> );
 };
