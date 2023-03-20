@@ -1,13 +1,14 @@
 /** @module Models/User */
 import {
-	BaseEntity,
-	Column,
-	CreateDateColumn,
-	Entity,
-	OneToMany,
-	PrimaryGeneratedColumn,
-	Relation,
-	UpdateDateColumn,
+  BaseEntity,
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+  Relation,
+  UpdateDateColumn,
 } from "typeorm";
 
 import { IPHistory } from "./ip_history";
@@ -19,12 +20,12 @@ import { ShoppingList } from "./shopping_list";
  */
 @Entity({ name: "users" })
 export class User extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryColumn()
+  id: string;
 
   @Column({
-  	length: 100,
-  	type: "varchar",
+    length: 100,
+    type: "varchar",
   })
   name: string;
 
