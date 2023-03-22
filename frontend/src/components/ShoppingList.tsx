@@ -11,38 +11,47 @@ import Cookies from "js-Cookie";
 
 export const ShoppingList = () => {
     const [shoppinglist, setshoppinglist] = useState([]);
-    let user_id = Cookies.get("user_id").split('|')[1];
-	const [userID, setUserID] = useState(user_id);
-	useEffect(() => {
-		const getShoppingList = async () => {
-			const shoppingList = await axios.get(
-				"http://localhost:8080/shoppingList/" + userID.toString()
-			);
-
-			setshoppinglist(await shoppingList.data);
-		};
-		void getShoppingList();
-	}, [userID]);
+    let user_id = Cookies.get("user_id");
+    if (user_id !== undefined)
+    user_id = user_id.split('|')[1];
+    const [userID, setUserID] = useState(user_id);
+    if (userID === undefined) {
+      alert("You must be logged in to view this page")
+		return (<></>);
+    }
+    else {
+      useEffect(() => {
+        const getShoppingList = async () => {
+          const shoppingList = await axios.get(
+            "http://localhost:8080/shoppingList/" + userID.toString()
+          );
     
-        return(
-        <Card className="mt-3">
-      <Card.Body>
-        <Card.Title>Shopping List</Card.Title>
-        <Table striped bordered hover>
-          <thead>
-            <tr>
-            <th>Ingredient</th>
-            </tr>
-          </thead>
-          <tbody>
-            {shoppinglist.map((sl) => (
-              <tr key={sl.id}>
-                <td>{sl.ing.ingName}</td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      </Card.Body>
-    </Card>
-    );
+          setshoppinglist(await shoppingList.data);
+        };
+        void getShoppingList();
+      }, [userID]);
+        
+            return(
+            <Card className="mt-3">
+          <Card.Body>
+            <Card.Title>Shopping List</Card.Title>
+            <Table striped bordered hover>
+              <thead>
+                <tr>
+                <th>Ingredient</th>
+                </tr>
+              </thead>
+              <tbody>
+                {shoppinglist.map((sl) => (
+                  <tr key={sl.id}>
+                    <td>{sl.ing.ingName}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </Card.Body>
+        </Card>
+        );
+    }
+	
 };

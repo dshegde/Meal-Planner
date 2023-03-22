@@ -13,10 +13,16 @@ export const MealPlanForDay = () => {
     const [mealplanforuser, setmealplanforuser] = useState([]);
     const [day, setDay] = useState([]);
     const [dayState, setdayState] = useState(false);
-    let user_id = Cookies.get("user_id").split('|')[1];
-	  const [userID, setUserID] = useState(user_id);
-    
-    const handleDay = (e) => {
+    let user_id = Cookies.get("user_id");
+    if (user_id !== undefined)
+    user_id = user_id.split('|')[1];
+    const [userID, setUserID] = useState(user_id);
+    if (userID === undefined) {
+      alert("You must be logged in to view this page")
+		return (<></>);
+    }
+    else {
+      const handleDay = (e) => {
         setDay(e);
         setdayState(true);
     };
@@ -49,6 +55,8 @@ export const MealPlanForDay = () => {
         </>
         
     );
+    }
+    
 };
 
 const dayResults = (mealplanforuser) => {

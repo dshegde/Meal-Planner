@@ -4,7 +4,6 @@ import { Card, Table } from 'react-bootstrap';
 
 export const Recipes = () => {
 	const [recipes, setRecipes] = useState([]);
-
 	useEffect(() => {
 		const getRecipes = async () => {
 			/* Note that using Axios here rather than built-in Fetch causes a bit of code bloat
@@ -24,10 +23,11 @@ export const Recipes = () => {
   return(
     <Card className="mt-3">
   <Card.Body>
-    <Card.Title>Meal Plan</Card.Title>
+    <Card.Title>Recipes</Card.Title>
     <Table striped bordered hover>
       <thead>
         <tr>
+        <th>Recipe ID</th>
         <th>Recipe Name</th>
         <th>Diet Type</th>
         <th>Cuisine</th>
@@ -37,6 +37,7 @@ export const Recipes = () => {
       <tbody>
         {recipes.map((recipe) => (
           <tr key={recipe.id}>
+            <td>{recipe.id}</td>
             <td>{recipe.recipeName}</td>
             <td>{recipe.dietType}</td>
             <td>{recipe.cuisine}</td>

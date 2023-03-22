@@ -37,23 +37,23 @@ function PublicLinksView() {
 				<Link to="/users">Users</Link>
 			  </Nav.Link>
 			  <Nav.Link>
-				<Link to="/recipes">recipes</Link>
+				<Link to="/recipes">Recipes</Link>
 			  </Nav.Link>
 			  <Nav.Link>
 				<Link to="/shoppinglist">Shopping List</Link>
 			  </Nav.Link>
 			  <NavDropdown title="MealPlans" id="basic-nav-dropdown">
 				<NavDropdown.Item>
-				  <Link to="/mealplan/all">All MealPlan</Link>
+				  <Link to="/mealplan/all">List all MealPlan</Link>
 				</NavDropdown.Item>
 				<NavDropdown.Item>
-				  <Link to="/mealplan/day">MealPlan for a day</Link>
+				  <Link to="/mealplan/day">List MealPlan by day</Link>
 				</NavDropdown.Item>
 				<NavDropdown.Item>
 				  <Link to="/mealplan/delete">Delete Meal Plan</Link>
 				</NavDropdown.Item>
 				<NavDropdown.Item>
-				  <Link to="/mealplan/post">Post Meal Plan</Link>
+				  <Link to="/mealplan/post">Add Meal Plan</Link>
 				</NavDropdown.Item>
 			  </NavDropdown>
 			</Nav>
@@ -79,23 +79,23 @@ function PublicLinksView() {
 				<Link to="/users">Users</Link>
 			  </Nav.Link>
 			  <Nav.Link>
-				<Link to="/recipes">recipes</Link>
+				<Link to="/recipes">Recipes</Link>
 			  </Nav.Link>
 			  <Nav.Link>
 				<Link to="/shoppinglist">Shopping List</Link>
 			  </Nav.Link>
 			  <NavDropdown title="MealPlans" id="basic-nav-dropdown">
 				<NavDropdown.Item>
-				  <Link to="/mealplan/all">All MealPlan</Link>
+				  <Link to="/mealplan/all">List all MealPlan</Link>
 				</NavDropdown.Item>
 				<NavDropdown.Item>
-				  <Link to="/mealplan/day">MealPlan for a day</Link>
+				  <Link to="/mealplan/day">List MealPlan by day</Link>
 				</NavDropdown.Item>
 				<NavDropdown.Item>
 				  <Link to="/mealplan/delete">Delete Meal Plan</Link>
 				</NavDropdown.Item>
 				<NavDropdown.Item>
-				  <Link to="/mealplan/post">Post Meal Plan</Link>
+				  <Link to="/mealplan/post">Add Meal Plan</Link>
 				</NavDropdown.Item>
 			  </NavDropdown>
 			</Nav>
