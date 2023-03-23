@@ -13,7 +13,9 @@
 
 Credentials to use 
 
-Username - user1@email.com], [user2@email.com], [user3@email.com
+Username - user1@email.com,
+           user2@email.com, 
+           user3@email.com
 password - password@123
 Password is the same for all 3 users.
 
