@@ -1,32 +1,56 @@
-version: '3'
+version: "3"
 services:
   postgres:
     container_name: meal-planner
     image: postgres:15-alpine
     restart: always
     ports:
-      - "5434:5432" 
+      - "5434:5432"
     volumes:
       - db:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=planner
       - POSTGRES_PASSWORD=planner
       - POSTGRES_DB=planner
-    #network_mode: host
-#  backend:
-#    container_name: backend
-#    build: ./backend/
-#    restart: always
-#    ports:
-#      - "8080:8080"
-#    environment:
-#      # Vite takes care of most of this for us, but it's good practice for other backends
-#      - VITE_DB_HOST=postgres
-#      - VITE_IP_ADDR=0.0.0.0
-#      - VITE_PORT=8080
-#      - VITE_LOGS_DIR=logs/
-#    depends_on: #This is a lie
-#      - postgres
+
+  # backend:
+  #   container_name: backend
+  #   build: ./backend/
+  #   restart: always
+  #   ports:
+  #     - "8080:8080"
+  #   environment:
+  #     - VITE_DB_HOST=postgres
+  #     - VITE_IP_ADDR=0.0.0.0
+  #     - VITE_PORT=8080
+  #     - VITE_LOGS_DIR=logs/
+  #     - VITE_DB_PORT=5432
+  #     - VITE_DB_USER=planner
+  #     - VITE_DB_PASS=planner
+  #     - VITE_DB_NAME=planner
+  #   depends_on:
+  #     - postgres
+
+  auth:
+    container_name: Auth
+    build: ./auth/
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - AUTH0_CLIENT_ID=JIFNsmiMxECEs0ZzWAsSxJCn1uB9Z2Iv
+      - AUTH0_CLIENT_SECRET=1ehee6u__68_0xxiebZ8mkE5QZtPUpmd5mGlMvYAZZIdk--PcBsNo5lUAYPca6ET
+      - AUTH0_DOMAIN=dev-mos1yyaskfoaocbo.us.auth0.com
+      - APP_SECRET_KEY=random
+  # frontend:
+  #   container_name: frontend
+  #   build: ./frontend/
+  #   restart: always
+  #   ports:
+  #     - "88:80" # We need to map here for convenience, so we don't conflict with a potential possible local server
+  #   environment:
+  #     - VITE_BACKEND_IP=backend
+  #     - VITE_BACKEND_PORT=8080
 volumes:
   db:
     driver: local

@@ -90,7 +90,7 @@ export const PostMealPlanForm = () => {
         <Row>
           <DropdownButton
             className="mt-5"
-            title="MealT Type"
+            title="Meal Type"
             onSelect={handleMealType}>
             <Dropdown.Item eventKey="breakfast">Breakfast</Dropdown.Item>
             <Dropdown.Item eventKey="lunch">Lunch</Dropdown.Item>
