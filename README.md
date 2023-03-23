@@ -1,20 +1,19 @@
-# DOGGR SETUP
+# Meal Planner SETUP
 (All commands are with respect to the root directory of the project)
 
 > Clone repository
 > Copy and configure .env file (cp backend/.env.example backend/.env)
 > Install dependencies (cd backend/ && pnpm install)
-> Start database (docker compose up postgres)
-> Reset prior Typeorm setup (cd backend/ && pnpm typeorm:drop)
+> Start database and auth service (docker compose up)
 > Migrate database (cd backend/ && pnpm migration:run)
-> Seed Database (cd backend/ && pnpm seed)
-> Test backend ( cd backend/ && pnpm test)
+> Seed Database (cd backend/ && pnpm seed or (pnpm gitSync))
 > Start backend (cd backend/ && pnpm dev)
+> Start frontend (cd frontend/ && pnpm dev)
 
-### Auto-generating migration file from current Models
 
-This is ONLY NEEDED during our initial development in-class!
-Once you clone the repository with the migrations already in it,
-you ONLY do the above!
-> pnpm typeorm:drop
-> pnpm migration:generate ./src/db/migrations/initialize.ts
+Credentials to use 
+
+Username - user1@email.com], [user2@email.com], [user3@email.com
+password - password@123
+Password is the same for all 3 users.
+
