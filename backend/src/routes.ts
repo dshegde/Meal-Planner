@@ -312,8 +312,8 @@ export async function planner_routes(app: FastifyInstance): Promise<void> {
     };
     Reply: any;
   }>("/mealplan", async (req: any, reply: FastifyReply) => {
-    var mealTypeOptions = ["breakfast", "lunch", "dinner", "snack"];
-    var dayOfWeekOptions = [
+    let mealTypeOptions = ["breakfast", "lunch", "dinner", "snack"];
+    let dayOfWeekOptions = [
       "monday",
       "tuesday",
       "wednesday",
@@ -424,7 +424,7 @@ export async function planner_routes(app: FastifyInstance): Promise<void> {
     };
     Reply:
       | {
-          id?: number;
+          id?: string;
           name?: string;
           email?: string;
           created_at?: string;
@@ -612,40 +612,6 @@ export async function planner_routes(app: FastifyInstance): Promise<void> {
         }
       }
     }
-  });
-  //test get route - should be deleted later
-  app.get("/test", async (req: any, reply: FastifyReply) => {
-    let recipeId = 1;
-    // find all ingredients for a recipe
-    // let ings = await app.db.rpIngRel.find({
-    //   relations: {
-    //     ingredient: true,
-    //     recipe: true,
-    //   },
-    //   where: {
-    //     recipe: {
-    //       id: recipeId,
-    //     },
-    //   },
-    // });
-    let userId = 23;
-    // let ingredientId = 10;
-    let ShopListItem = await app.db.sl.find({
-      relations: {
-        user: true,
-        ing: true,
-      },
-      where: {
-        check: false,
-        user: {
-          id: userId,
-        },
-        // ing: {
-        //   id: ingredientId,
-        // },
-      },
-    });
-    reply.send(ShopListItem);
   });
 
   //POST ingredient to a users shopping list

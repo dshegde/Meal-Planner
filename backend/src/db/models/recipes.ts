@@ -1,4 +1,5 @@
 /** @module Models/User */
+import TypeORM from "typeorm";
 import {
   BaseEntity,
   Column,
@@ -18,35 +19,38 @@ import { User } from "./user";
 /**
  *  Class representing user table
  */
-@Entity()
-export class Recipes extends BaseEntity {
-  @PrimaryGeneratedColumn()
+@TypeORM.Entity()
+export class Recipes extends TypeORM.BaseEntity {
+  @TypeORM.PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @TypeORM.Column()
   recipeName: string;
 
-  @Column()
+  @TypeORM.Column()
   dietType: string;
 
-  @Column()
+  @TypeORM.Column()
   cuisine: string;
 
-  @Column({
+  @TypeORM.Column({
     length: 500,
     type: "varchar",
   })
   description: string;
 
-  @OneToMany((type) => MealPlans, (mp: MealPlans) => mp.recipe)
-  ids: Relation<MealPlans[]>;
+  @TypeORM.OneToMany((type) => MealPlans, (mp: MealPlans) => mp.recipe)
+  ids: TypeORM.Relation<MealPlans[]>;
 
-  @OneToMany((type) => RecipeIngredientRel, (rpi: RecipeIngredientRel) => rpi.recipe)
-  rpIngRel: Relation<RecipeIngredientRel[]>;
+  @TypeORM.OneToMany(
+    (type) => RecipeIngredientRel,
+    (rpi: RecipeIngredientRel) => rpi.recipe
+  )
+  rpIngRel: TypeORM.Relation<RecipeIngredientRel[]>;
 
-  @CreateDateColumn()
+  @TypeORM.CreateDateColumn()
   created_at: string;
 
-  @UpdateDateColumn()
+  @TypeORM.UpdateDateColumn()
   updated_at: string;
 }

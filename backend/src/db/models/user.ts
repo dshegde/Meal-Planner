@@ -1,13 +1,15 @@
 /** @module Models/User */
+import TypeORM from "typeorm";
 import {
-	BaseEntity,
-	Column,
-	CreateDateColumn,
-	Entity,
-	OneToMany,
-	PrimaryGeneratedColumn,
-	Relation,
-	UpdateDateColumn,
+  BaseEntity,
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+  Relation,
+  UpdateDateColumn,
 } from "typeorm";
 
 import { IPHistory } from "./ip_history";
@@ -17,33 +19,33 @@ import { ShoppingList } from "./shopping_list";
 /**
  *  Class representing user table
  */
-@Entity({ name: "users" })
-export class User extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+@TypeORM.Entity({ name: "users" })
+export class User extends TypeORM.BaseEntity {
+  @TypeORM.PrimaryColumn()
+  id: string;
 
-  @Column({
-  	length: 100,
-  	type: "varchar",
+  @TypeORM.Column({
+    length: 100,
+    type: "varchar",
   })
   name: string;
 
-  @Column("text")
+  @TypeORM.Column("text")
   email: string;
 
   // IPHistory
-  @OneToMany((type) => IPHistory, (ip: IPHistory) => ip.user)
-  ips: Relation<IPHistory[]>;
+  @TypeORM.OneToMany((type) => IPHistory, (ip: IPHistory) => ip.user)
+  ips: TypeORM.Relation<IPHistory[]>;
 
-  @OneToMany((type) => MealPlans, (mp: MealPlans) => mp.user)
-  mps: Relation<MealPlans[]>;
+  @TypeORM.OneToMany((type) => MealPlans, (mp: MealPlans) => mp.user)
+  mps: TypeORM.Relation<MealPlans[]>;
 
-  @OneToMany((type) => ShoppingList, (sl: ShoppingList) => sl.user)
-  slIds: Relation<ShoppingList[]>;
+  @TypeORM.OneToMany((type) => ShoppingList, (sl: ShoppingList) => sl.user)
+  slIds: TypeORM.Relation<ShoppingList[]>;
 
-  @CreateDateColumn()
+  @TypeORM.CreateDateColumn()
   created_at: string;
 
-  @UpdateDateColumn()
+  @TypeORM.UpdateDateColumn()
   updated_at: string;
 }

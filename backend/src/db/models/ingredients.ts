@@ -1,15 +1,16 @@
 /** @module Models/User */
+import TypeORM from "typeorm";
 import {
-	BaseEntity,
-	Column,
-	CreateDateColumn,
-	Entity,
-	JoinTable,
-	ManyToMany,
-	OneToMany,
-	PrimaryGeneratedColumn,
-	Relation,
-	UpdateDateColumn,
+  BaseEntity,
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  Relation,
+  UpdateDateColumn,
 } from "typeorm";
 import { Recipes } from "./recipes";
 import { RecipeIngredientRel } from "./recipe_ingredient_rel";
@@ -18,20 +19,23 @@ import { ShoppingList } from "./shopping_list";
 /**
  *  Class representing Ingredients table
  */
-@Entity()
-export class Ingredients extends BaseEntity {
-	@PrimaryGeneratedColumn()
-	id: number;
+@TypeORM.Entity()
+export class Ingredients extends TypeORM.BaseEntity {
+  @TypeORM.PrimaryGeneratedColumn()
+  id: number;
 
-	@Column({
-		length: 100,
-		type: "varchar",
-	})
-	ingName: string;
+  @TypeORM.Column({
+    length: 100,
+    type: "varchar",
+  })
+  ingName: string;
 
-	@OneToMany((type) => ShoppingList, (sl: ShoppingList) => sl.ing)
-	slId: Relation<ShoppingList[]>;
+  @TypeORM.OneToMany((type) => ShoppingList, (sl: ShoppingList) => sl.ing)
+  slId: TypeORM.Relation<ShoppingList[]>;
 
-	@OneToMany((type) => RecipeIngredientRel, (rpi: RecipeIngredientRel) => rpi.recipe)
-	rpIngRel: Relation<RecipeIngredientRel[]>;
+  @TypeORM.OneToMany(
+    (type) => RecipeIngredientRel,
+    (rpi: RecipeIngredientRel) => rpi.recipe
+  )
+  rpIngRel: TypeORM.Relation<RecipeIngredientRel[]>;
 }

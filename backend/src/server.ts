@@ -9,6 +9,7 @@ import { getDirName } from "./lib/helpers";
 import logger from "./lib/logger";
 import { planner_routes } from "./routes";
 import DbPlugin from "./plugins/database";
+import cors from "@fastify/cors";
 
 /**
  * This is our main "Create App" function.  Note that it does NOT start the server, this only creates it
@@ -17,38 +18,61 @@ import DbPlugin from "./plugins/database";
  * @return  Promise<FastifyInstance>
  */
 export async function buildApp(useLogging: boolean) {
-	const app = useLogging
-		? Fastify({
-				// enables fancy logs and disabling them during tests
-				logger,
-		  })
-		: Fastify({ logger: false });
+  const app = useLogging
+    ? Fastify({
+        // enables fancy logs and disabling them during tests
+        logger,
+      })
+    : Fastify({ logger: false });
 
-	try {
-		// add express-like 'app.use' middleware support
-		await app.register(fastifyMiddie);
+  try {
+    await app.register(cors, {
+      origin: (origin, cb) => {
+        // If we're in dev mode, no CORS necessary, let *everything* pass
+        if (import.meta.env.DEV) {
+          cb(null, true);
+          return;
+        }
+        const hostname = new URL(origin).hostname;
+        // Otherwise check to see if hostnames match, or are local connections and allow those too
+        if (
+          hostname === "localhost" ||
+          hostname === "127.0.0.1" ||
+          hostname === import.meta.env.VITE_IP_ADDR
+        ) {
+          //  Request from localhost will pass
+          cb(null, true);
+          return;
+        }
+        // Generate an error on other origins, disabling access
+        cb(new Error("Not allowed"), false);
+      },
+    });
 
-		// add static file handling
-		await app.register(staticFiles, {
-			root: path.join(getDirName(import.meta), "../public"),
-			prefix: "/public/",
-		});
+    // add express-like 'app.use' middleware support
+    await app.register(fastifyMiddie);
 
-		// Adds all of our Router's routes to the app
-		app.log.info("Registering routes");
-		await app.register(planner_routes);
+    // add static file handling
+    await app.register(staticFiles, {
+      root: path.join(getDirName(import.meta), "../public"),
+      prefix: "/public/",
+    });
 
-		// Connects to postgres
-		app.log.info("Connecting to Database...");
-		await app.register(DbPlugin);
+    // Adds all of our Router's routes to the app
+    app.log.info("Registering routes");
+    await app.register(planner_routes);
 
-		app.log.info("App built successfully.");
-	} catch (err) {
-		console.error(err);
-		process.exit(1);
-	}
+    // Connects to postgres
+    app.log.info("Connecting to Database...");
+    await app.register(DbPlugin);
 
-	return app;
+    app.log.info("App built successfully.");
+  } catch (err) {
+    console.error(err);
+    process.exit(1);
+  }
+
+  return app;
 }
 
 /**
@@ -58,22 +82,22 @@ export async function buildApp(useLogging: boolean) {
  * @return  Promise<void> When server closes
  */
 export async function listen(app: FastifyInstance) {
-	try {
-		await app.listen(
-			{
-				// Config object is optional and defaults to { host: 'localhost', port: 3000 }
-				host: import.meta.env.VITE_IP_ADDR,
-				port: Number(import.meta.env.VITE_PORT),
-			},
-			(err: any) => {
-				// Listen handler doesn't need to do much except report errors!
-				if (err) {
-					app.log.error(err);
-				}
-			},
-		);
-	} catch (err) {
-		// This will catch any errors that further bubble up from listen(), should be unnecessary
-		app.log.error(err);
-	}
+  try {
+    await app.listen(
+      {
+        // Config object is optional and defaults to { host: 'localhost', port: 3000 }
+        host: import.meta.env.VITE_IP_ADDR,
+        port: Number(import.meta.env.VITE_PORT),
+      },
+      (err: any) => {
+        // Listen handler doesn't need to do much except report errors!
+        if (err) {
+          app.log.error("THIS IS ERROR!!!!!!" + err);
+        }
+      }
+    );
+  } catch (err) {
+    // This will catch any errors that further bubble up from listen(), should be unnecessary
+    app.log.error(err);
+  }
 }

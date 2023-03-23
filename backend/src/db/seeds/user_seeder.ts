@@ -19,11 +19,17 @@ export class UserSeeder extends Seeder {
     // note we cannot use .clear() because postgres cascade is bugged in Typeorm
     // https://github.com/typeorm/typeorm/issues/1649
     await app.db.user.delete({});
-
-    for (let i = 0; i < 10; i++) {
+    let userIds = [
+      "641800dc739976b7470d8074",
+      "641800fa72c885b94f3b3d93",
+      "641a4e6f8cca2db234b523f8",
+    ];
+    let userEmail = ["user1@email.com", "user2@email.com", "user3@email.com"];
+    for (let i = 0; i < userIds.length; i++) {
       let user = new User();
-      user.name = "user" + i;
-      user.email = "user" + i + "@email.com";
+      user.id = userIds[i];
+      user.name = "user" + i + 1;
+      user.email = userEmail[i];
       await user.save();
       app.log.info("Seeded user " + i);
     }
