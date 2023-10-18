@@ -13,7 +13,7 @@ import { Recipes } from "./db/models/recipes";
 import { Ingredients } from "./db/models/ingredients";
 import { RecipeIngredientRel } from "./db/models/recipe_ingredient_rel";
 import { MealPlans } from "./db/models/meal_plans";
-import { ShoppingList } from "./db/models/shopping_list";
+import { ShoppingList } from  "./db/models/shopping_list";
 
 /**
  * App plugin where we construct our routes
