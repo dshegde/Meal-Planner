@@ -15,23 +15,30 @@ export class IngredientsSeeder extends Seeder {
 	 */
 
 	override async run(app: FastifyInstance) {
-		app.log.info("Seeding ingredients...");
-		// clear out whatever's already there
-		await app.db.ig.delete({});
-		const rp = await Recipes.find();
+		try {
+			app.log.info("Seeding ingredients...");
+			await app.db.ig.delete({});
+			const recipes = await Recipes.find();
 
-		// seeding both ingredients table as well as the many-to-many relation table
-		for (let i = 0; i < rp.length; i++) {
-			const recipe = [rp[i]];
-			for (let j = 0; j < 5; j++) {
-				let rel = new RecipeIngredientRel();
-				let ing = new Ingredients();
-				ing.ingName = faker.lorem.words(3);
-				rel.recipe = recipe[0];
-				rel.ingredient = ing;
-				await ing.save();
-				await rel.save();
+			// seeding both ingredients table as well as the many-to-many relation table
+			for (const recipe of recipes) {
+				await this.seedIngredientsForRecipe(recipe);
 			}
+		} catch (error) {
+			app.log.error("Error in seeding ingredients: ", error);
+		}
+	}
+
+	private async seedIngredientsForRecipe(recipe: any) {
+		const INGREDIENTS_PER_RECIPE = 5;
+		for (let i = 0; i < INGREDIENTS_PER_RECIPE; i++) {
+			let rel = new RecipeIngredientRel();
+			let ing = new Ingredients();
+			ing.ingName = faker.lorem.words(3);
+			rel.recipe = recipe;
+			rel.ingredient = ing;
+			await ing.save();
+			await rel.save();
 		}
 	}
 }
