@@ -6,41 +6,51 @@ import { Recipes } from "../models/recipes";
 import { faker } from "@faker-js/faker";
 import { GenerateRandomNumber } from "../../lib/helpers";
 
+enum CuisineType {
+  American = 1,
+  Asian = 2,
+  British = 3,
+  Cajun = 4,
+}
+
+enum DietType {
+  vegan = 1,
+  vegetarian = 2,
+  pescatarian = 3,
+  NonVegetarian = 4,
+}
+
 export class RecipeSeeder extends Seeder {
-  /**
+	/**
    * Runs the IPHistory table's seed
    * @function
    * @param {FastifyInstance} app
    * @returns {Promise<void>}
    */
 
-  override async run(app: FastifyInstance) {
-    enum DietType {
-      vegan = 1,
-      vegetarian = 2,
-      pescatarian = 3,
-      NonVegetarian = 4,
-    }
-    enum CuisineType {
-      American = 1,
-      Asian = 2,
-      British = 3,
-      Cajun = 4,
-    }
-    app.log.info("Seeding recipe...");
-    // clear out whatever's already there
-    await app.db.rp.delete({});
-    
-    const users = await User.find();
-    for (let i = 0; i < users.length; i++) {
-      let rp = new Recipes();
-      rp.recipeName = faker.lorem.words(3);
-      rp.dietType = DietType[GenerateRandomNumber(4)];
-      rp.cuisine = CuisineType[GenerateRandomNumber(4)];
-      rp.description = faker.lorem.words(10);
-      await rp.save();
-    }
-  }
+	override async run(app: FastifyInstance) {
+
+		try {
+			app.log.info("Seeding recipe...");
+			await app.db.rp.delete({});
+			const users = await User.find();
+			users.forEach(() => this.seedRecipeForUser());
+			app.log.info("Finished seeding recipe");
+      
+		} catch (error) {
+			app.log.error("Error in seeding recipe: ", error);
+		}
+	}
+
+	private async seedRecipeForUser() {
+		let recipe = new Recipes();
+		recipe.recipeName = faker.lorem.words(3);
+		recipe.dietType = DietType[GenerateRandomNumber(4)];
+		recipe.cuisine = CuisineType[GenerateRandomNumber(4)];
+		recipe.description = faker.lorem.words(10);
+		await recipe.save();
+	}
+
 }
 
 // generate default instance for convenience

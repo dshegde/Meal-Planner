@@ -1,10 +1,10 @@
 /** @module Seeds/IPHistory */
 
-import {faker} from "@faker-js/faker";
-import {Seeder} from "../../lib/seed_manager";
-import {IPHistory} from "../models/ip_history";
-import {User} from "../models/user";
-import {FastifyInstance} from "fastify";
+import { faker } from "@faker-js/faker";
+import { Seeder } from "../../lib/seed_manager";
+import { IPHistory } from "../models/ip_history";
+import { User } from "../models/user";
+import { FastifyInstance } from "fastify";
 
 // note here that using faker makes testing a bit...hard
 // We can set a particular seed for faker, then use it later in our testing!
@@ -22,27 +22,32 @@ export class IPHistorySeeder extends Seeder {
    * @returns {Promise<void>}
    */
 	override async run(app: FastifyInstance) {
-		app.log.info("Seeding IP Histories...");
-		// Remove everything in there currently
-		await app.db.ip.delete({});
-		// get our users and make each a few IPs
-		const users = await User.find();
+		try {
+			app.log.info("Seeding IP Histories...");
+			await app.db.ip.delete({});
+			const users = await User.find();
 
-		for (let i = 0; i < users.length; i++) {
-	  let ip = new IPHistory();
-	  ip.user = users[i];
-	  ip.ip = faker.internet.ip();
-	  await ip.save();
-
-	  ip = new IPHistory();
-	  ip.user = users[i];
-	  ip.ip = faker.internet.ip();
-	  const secondResult = await ip.save();
-	  app.log.info("Finished seeding IP history pair for user: " + i);
+			for (const user of users) {
+				await this.seedIPHistoryForUser(user, app);
+			}
+		} catch (error) {
+			app.log.error("Error in seeding IP history: ", error);
 		}
+	}
+
+	private async seedIPHistoryForUser(user: any, app: FastifyInstance) {
+		await this.createAndSaveIPHistory(user);
+		await this.createAndSaveIPHistory(user);
+
+		app.log.info("Finished seeding IP history pair for user: " + user.id);
+	}
+
+	private async createAndSaveIPHistory(user: any) {
+		let ipHistory = new IPHistory();
+		ipHistory.user = user;
+		ipHistory.ip = faker.internet.ip();
+		await ipHistory.save();
 	}
 }
 
 export const IPHistorySeed = new IPHistorySeeder();
-
- 

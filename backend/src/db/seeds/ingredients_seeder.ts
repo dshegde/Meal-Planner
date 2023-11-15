@@ -24,6 +24,8 @@ export class IngredientsSeeder extends Seeder {
 			for (const recipe of recipes) {
 				await this.seedIngredientsForRecipe(recipe);
 			}
+			app.log.info("Finished seeding ingredients");
+
 		} catch (error) {
 			app.log.error("Error in seeding ingredients: ", error);
 		}

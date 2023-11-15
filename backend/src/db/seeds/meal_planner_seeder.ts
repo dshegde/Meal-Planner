@@ -12,6 +12,22 @@ import { GenerateRandomNumber } from "../../lib/helpers";
 // We can set a particular seed for faker, then use it later in our testing!
 faker.seed(100);
 
+enum DayOfWeek {
+	monday,
+	tuesday,
+	wednesday,
+	thursday,
+	friday,
+	saturday,
+	sunday,
+}
+
+enum MealType {
+	breakfast,
+	lunch,
+	dinner,
+}
+
 /**
  * Seeds the ip_history table
  */
@@ -24,49 +40,40 @@ export class MealPlansSeeder extends Seeder {
 	 */
 
 	override async run(app: FastifyInstance) {
-		enum MealType {
-			breakfast = 1,
-			lunch = 2,
-			dinner = 3,
-		}
-		enum DayOfWeek {
-			monday = 1,
-			tuesday = 2,
-			wednesday = 3,
-			thursday = 4,
-			friday = 5,
-			saturday = 6,
-			sunday = 7,
-		}
-		app.log.info("Seeding MealPlan...");
-		// Remove everything in there currently
-		await app.db.mp.delete({});
-		// get our users
-		const users = await User.find();
 
-		for (let i = 0; i < users.length; i++) {
-			let user = users[i];
-			for (let j = 1; j < 8; j++) {
-				let dayOfWeek = DayOfWeek[j];
-				for (let j = 0; j < 3; j++) {
-					let mealplan = new MealPlans();
-					mealplan.user = user;
-					mealplan.dayOfWeek = dayOfWeek;
-					let recipe = await Recipes.find();
+		try {
+			app.log.info("Seeding MealPlan...");
+			await app.db.mp.delete({});
+			const users = await User.find();
+
+			for (let user of users) {
+				await this.seedMealPlanForUser(user);
+			}
+			app.log.info("Finished seeding MealPlan");
+		} catch (error) {
+			app.log.error("Error in seeding MealPlan: ", error);
+		}
+	}
+
+	private async seedMealPlanForUser(user: any) {
+		const dayNames = Object.values(DayOfWeek).filter(value => isNaN(Number(value)));
+		for (let dayOfWeek of dayNames) {
+
+			const mealTypes = Object.values(MealType).filter(value => isNaN(Number(value)));
+			for (let mealType of mealTypes) {
+
+				const mealplan = new MealPlans();
+				mealplan.user = user;
+				mealplan.dayOfWeek = dayOfWeek as string;
+				const recipe = await Recipes.find();
+				if (recipe.length > 0) {
 					mealplan.recipe = recipe[GenerateRandomNumber(recipe.length - 1)];
-					switch (j) {
-						case 0:
-							mealplan.mealType = "breakfast";
-							break;
-						case 1:
-							mealplan.mealType = "lunch";
-							break;
-						case 2:
-							mealplan.mealType = "dinner";
-							break;
-					}
-					await mealplan.save();
+				} else {
+					console.error('No recipes found');
+					continue;
 				}
+				mealplan.mealType = mealType as string;
+				await mealplan.save();
 			}
 		}
 	}
