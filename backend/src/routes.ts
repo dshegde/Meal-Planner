@@ -23,6 +23,7 @@ export async function planner_routes(app: FastifyInstance): Promise<void> {
 	// TODO: Refactor this in favor of fastify-cors
 	app.use(cors());
 
+	
 	/*Helper functions*/
 	// async function handleNotFoundResponse(reply: any, paramName: string, paramValue: any) { //unsure of type for reply
 	// 	let errMsg = {
