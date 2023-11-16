@@ -66,10 +66,9 @@ export class MealPlansSeeder extends Seeder {
 				mealplan.user = user;
 				mealplan.dayOfWeek = dayOfWeek as string;
 				const recipe = await Recipes.find();
-				if (recipe.length > 0) {
-					mealplan.recipe = recipe[GenerateRandomNumber(recipe.length - 1)];
+				if (recipe && recipe.length > 0) {
+					mealplan.recipe = recipe[GenerateRandomNumber(recipe.length) - 1];
 				} else {
-					console.error('No recipes found');
 					continue;
 				}
 				mealplan.mealType = mealType as string;
