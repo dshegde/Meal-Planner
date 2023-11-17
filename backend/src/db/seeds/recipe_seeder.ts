@@ -7,17 +7,17 @@ import { faker } from "@faker-js/faker";
 import { GenerateRandomNumber } from "../../lib/helpers";
 
 enum CuisineType {
-  American = 1,
-  Asian = 2,
-  British = 3,
-  Cajun = 4,
+	American = 1,
+	Asian = 2,
+	British = 3,
+	Cajun = 4,
 }
 
 enum DietType {
-  vegan = 1,
-  vegetarian = 2,
-  pescatarian = 3,
-  NonVegetarian = 4,
+	vegan = 1,
+	vegetarian = 2,
+	pescatarian = 3,
+	NonVegetarian = 4,
 }
 
 export class RecipeSeeder extends Seeder {
@@ -36,7 +36,7 @@ export class RecipeSeeder extends Seeder {
 			const users = await User.find();
 			users.forEach(() => this.seedRecipeForUser());
 			app.log.info("Finished seeding recipe");
-      
+
 		} catch (error) {
 			app.log.error("Error in seeding recipe: ", error);
 		}
