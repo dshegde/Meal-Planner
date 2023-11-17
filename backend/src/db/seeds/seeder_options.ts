@@ -11,18 +11,15 @@ export type SeederOptionsType = {
   seeds: Array<Seeder>;
 };
 
-/**
- * Options bag for configuring which seeds to run during `pnpm seed`
- */
 const SeederOptions: any = {
-  seeds: [
-    UserSeed,
-    IPHistorySeed,
-    RecipeSeed,
-    MealPlansSeed,
-    IngredientsSeed,
-    ShoppingListSeed,
-  ],
+	seeds: [
+		UserSeed,
+		IPHistorySeed,
+		RecipeSeed,
+		MealPlansSeed,
+		IngredientsSeed,
+		ShoppingListSeed,
+	],
 };
 
 export default SeederOptions;
