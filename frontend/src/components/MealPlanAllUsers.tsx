@@ -1,16 +1,10 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-Cookie";
-
-// @ts-ignore
-const serverIP = import.meta.env.VITE_BACKEND_IP;
-// @ts-ignore
-const serverPort = import.meta.env.VITE_BACKEND_PORT;
-
-const serverUrl = `http://${serverIP}:${serverPort}`;
+import { SERVER_URL } from "./Config";
 
 export const MealPlanForUser = () => {
-  const [mealplanforuser, setmealplanforuser] = useState([]);
+  const [mealPlanForUser, setMealPlanForUser] = useState([]);
   let user_id = Cookies.get("user_id");
   if (user_id !== undefined) user_id = user_id.split("|")[1];
   const [userID, setUserID] = useState(user_id);
@@ -26,10 +20,10 @@ export const MealPlanForUser = () => {
          * So if you try swapping in our project, you'll find we only save 6 kilobytes
          */
         const mealplan = await axios.get(
-          serverUrl + "/mealplan/" + userID.toString()
+          SERVER_URL + "/mealplan/" + userID.toString()
         );
 
-        setmealplanforuser(await mealplan.data);
+        setMealPlanForUser(await mealplan.data);
       };
       void getMealPlans();
     }, [userID]);
@@ -44,11 +38,11 @@ export const MealPlanForUser = () => {
           </tr>
         </thead>
         <tbody>
-          {mealplanforuser.map((mp) => (
-            <tr key={mp.id}>
-              <td>{mp.mealType}</td>
-              <td>{mp.dayOfWeek}</td>
-              <td>{mp.recipe.recipeName}</td>
+          {mealPlanForUser.map((mealPlanItem) => (
+            <tr key={mealPlanItem.id}>
+              <td>{mealPlanItem.mealType}</td>
+              <td>{mealPlanItem.dayOfWeek}</td>
+              <td>{mealPlanItem.recipe.recipeName}</td>
             </tr>
           ))}
         </tbody>

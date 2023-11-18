@@ -1,79 +1,73 @@
+import { useEffect, useState } from "react";
 import Dropdown from "react-bootstrap/Dropdown";
 import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import { useEffect, useState } from "react";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import axios from "axios";
 import Cookies from "js-Cookie";
+import { SERVER_URL } from "./Config";
 
-// @ts-ignore
-const serverIP = import.meta.env.VITE_BACKEND_IP;
-// @ts-ignore
-const serverPort = import.meta.env.VITE_BACKEND_PORT;
-
-const serverUrl = `http://${serverIP}:${serverPort}`;
+// Main Component
 export const MealPlanForm = () => {
-  const [mealType, setMealtype] = useState([]);
-  const [dayOfWeek, setDay] = useState([]);
-  const [mealPlanAll, setMealPlanAll] = useState(false);
+  const [selectedMealType, setSelectedMealtype] = useState([]);
+  const [selectedDayOfWeek, setSelectedDayOfWeek] = useState([]);
+  const [mealPlanDeleted, setMealPlanDeleted] = useState(false);
+
   let user_id = Cookies.get("user_id");
   if (user_id !== undefined) user_id = user_id.split("|")[1];
   const [userID, setUserID] = useState(user_id);
   if (userID === undefined) {
     alert("You must be logged in to view this page");
-    return <></>;
+    return;
   } else {
     const handleSubmit = (e) => {
-      setMealPlanAll(true);
+      setMealPlanDeleted(true);
     };
     useEffect(() => {
       const getMealPlans = async () => {
         const mealplan = await axios.delete(
-          serverUrl +
-            "/mealplan/" +
-            userID.toString() +
-            "/" +
-            dayOfWeek.toString() +
-            "/" +
-            mealType.toString()
+          `${SERVER_URL}/mealplan/${userID}/${selectedDayOfWeek}/${selectedMealType}`
         );
       };
       void getMealPlans();
-    }, [dayOfWeek, mealType, userID]);
+    }, [selectedDayOfWeek, selectedMealType, userID]);
 
     const handleMealType = (e) => {
       console.log(e);
-      setMealtype(e);
+      setSelectedMealtype(e);
     };
     const handleDay = (e) => {
       console.log(e);
-      setDay(e);
+      setSelectedDayOfWeek(e);
     };
 
     return (
       <>
         <Row>
           <Col>
-            <DropdownButton title="Meal Type" onSelect={handleMealType}>
-              <Dropdown.Item eventKey="breakfast">Breakfast</Dropdown.Item>
-              <Dropdown.Item eventKey="lunch">Lunch</Dropdown.Item>
-              <Dropdown.Item eventKey="dinner">Dinner</Dropdown.Item>
-            </DropdownButton>
-            <h4>You selected {mealType}</h4>
+            <DropdownSelector
+              title="Meal Type"
+              options={["breakfast", "lunch", "dinner"]}
+              onSelect={handleMealType}
+            />
+            <h4>You selected {selectedMealType}</h4>
           </Col>
           <Col>
-            <DropdownButton title="Day of Week" onSelect={handleDay}>
-              <Dropdown.Item eventKey="monday">Monday</Dropdown.Item>
-              <Dropdown.Item eventKey="tuesday">Tuesday</Dropdown.Item>
-              <Dropdown.Item eventKey="wednesday">Wednesday</Dropdown.Item>
-              <Dropdown.Item eventKey="thursday">Thursday</Dropdown.Item>
-              <Dropdown.Item eventKey="friday">Friday</Dropdown.Item>
-              <Dropdown.Item eventKey="saturday">Saturday</Dropdown.Item>
-              <Dropdown.Item eventKey="Sunday">Sunday</Dropdown.Item>
-            </DropdownButton>
-            <h4>You selected {dayOfWeek}</h4>
+            <DropdownSelector
+              title="Day of Week"
+              options={[
+                "monday",
+                "tuesday",
+                "wednesday",
+                "thursday",
+                "friday",
+                "saturday",
+                "sunday",
+              ]}
+              onSelect={handleDay}
+            />
+            <h4>You selected {selectedDayOfWeek}</h4>
           </Col>
           <Col>
             <Button variant="primary" type="submit" onClick={handleSubmit}>
@@ -81,8 +75,19 @@ export const MealPlanForm = () => {
             </Button>
           </Col>
         </Row>
-        {mealPlanAll ? <h1>Deleted</h1> : null}
+        {mealPlanDeleted ? <h1>Deleted</h1> : null}
       </>
     );
   }
 };
+
+// Extracted Dropdown Selector Component
+const DropdownSelector = ({ title, options, onSelect }) => (
+  <DropdownButton title={title} onSelect={onSelect}>
+    {options.map((option, index) => (
+      <Dropdown.Item key={index} eventKey={option}>
+        {option.charAt(0).toUpperCase() + option.slice(1)}
+      </Dropdown.Item>
+    ))}
+  </DropdownButton>
+);
