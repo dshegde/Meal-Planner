@@ -1,61 +1,61 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Form, Button } from "react-bootstrap";
-
 import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Dropdown from "react-bootstrap/Dropdown";
-import DropdownButton from "react-bootstrap/DropdownButton";
-import { Card, Table } from "react-bootstrap";
+import {
+  DropdownSelector,
+  daysOfWeeksOptions,
+  mealTypeOptions,
+} from "./DropdownButton";
+import { Card } from "react-bootstrap";
 import axios from "axios";
 import "../Dashboard.css";
 import Cookies from "js-Cookie";
-// @ts-ignore
-const serverIP = import.meta.env.VITE_BACKEND_IP;
-// @ts-ignore
-const serverPort = import.meta.env.VITE_BACKEND_PORT;
-
-const serverUrl = `http://${serverIP}:${serverPort}`;
+import { SERVER_URL } from "./Config";
+import { URLS } from "./ConstantsPaths";
 
 export const PostMealPlanForm = () => {
   const [mealType, setMealType] = useState([]);
-  const [day, setDay] = useState([]);
+  const [selectedDay, setSelectedDay] = useState([]);
   const [recipeID, setRecipeID] = useState([]);
   const [check, setCheck] = useState(false);
-  let user_id = Cookies.get("user_id");
-  if (user_id !== undefined) user_id = user_id.split("|")[1];
-  const [userID, setUserID] = useState(user_id);
-  if (userID === undefined) {
+
+  // Get user ID from cookies
+  // TODO - Add this logic all files
+  let userIdFromCookie = Cookies.get("user_id");
+  const userID = userIdFromCookie ? userIdFromCookie.split("|")[1] : undefined;
+  if (!userID) {
     alert("You must be logged in to view this page");
     return <></>;
   } else {
     const handleSubmit = (e) => {
       setCheck(true);
     };
-    // e.preventDefault();
     useEffect(() => {
       const getMealPlans = async () => {
         const postData = {
           userId: userID.toString(),
           mealType: mealType.toString(),
-          dayOfWeek: day.toString(),
+          dayOfWeek: selectedDay.toString(),
           recipeId: Number(recipeID),
         };
 
-        const mealplan = await axios
-          .post(serverUrl + "/mealplan", postData)
-          .then((response) => {
-            console.log(response.data);
-          })
-          .catch((error) => {
-            console.error(error);
-          });
+        // TODO - Add this to all files or in separate file
+        try {
+          const mealplan = await axios.post(
+            SERVER_URL + URLS.MEAL_PLANS,
+            postData
+          );
+          console.log(mealplan.data);
+        } catch (error) {
+          console.error(error);
+        }
       };
       void getMealPlans();
-    }, [day, mealType, recipeID, userID]);
+    }, [selectedDay, mealType, recipeID, userID]);
 
-    const handleDay = (e) => {
+    const handleDaySelection = (e) => {
       console.log(e);
-      setDay(e);
+      setSelectedDay(e);
     };
     const handleMealType = (e) => {
       console.log(e);
@@ -73,29 +73,23 @@ export const PostMealPlanForm = () => {
           the Recipes tab
         </h3>
         <Row>
-          <DropdownButton
-            className="mt-5"
+          // TODO - Add separate file for Dropdown in all files (code is
+          reuseable)
+          <DropdownSelector
             title="Day of Week"
-            onSelect={handleDay}>
-            <Dropdown.Item eventKey="monday">Monday</Dropdown.Item>
-            <Dropdown.Item eventKey="tuesday">Tuesday</Dropdown.Item>
-            <Dropdown.Item eventKey="wednesday">Wednesday</Dropdown.Item>
-            <Dropdown.Item eventKey="thursday">Thursday</Dropdown.Item>
-            <Dropdown.Item eventKey="friday">Friday</Dropdown.Item>
-            <Dropdown.Item eventKey="saturday">Saturday</Dropdown.Item>
-            <Dropdown.Item eventKey="Sunday">Sunday</Dropdown.Item>
-          </DropdownButton>
-          <h4>You selected {day}</h4>
+            options={daysOfWeeksOptions}
+            onSelect={handleDaySelection}
+            selectedValue={selectedDay}
+          />
+          <h4>You selected {selectedDay}</h4>
         </Row>
         <Row>
-          <DropdownButton
-            className="mt-5"
+          <DropdownSelector
             title="Meal Type"
-            onSelect={handleMealType}>
-            <Dropdown.Item eventKey="breakfast">Breakfast</Dropdown.Item>
-            <Dropdown.Item eventKey="lunch">Lunch</Dropdown.Item>
-            <Dropdown.Item eventKey="dinner">Dinner</Dropdown.Item>
-          </DropdownButton>
+            options={mealTypeOptions}
+            onSelect={handleMealType}
+            selectedValue={mealType}
+          />
           <h4>You selected {mealType}</h4>
         </Row>
         <Row>
@@ -116,7 +110,8 @@ export const PostMealPlanForm = () => {
             variant="primary"
             size="lg"
             type="submit"
-            onClick={handleSubmit}>
+            onClick={handleSubmit}
+          >
             Add Meal Plan
           </Button>
         </Row>
