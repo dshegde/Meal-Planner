@@ -10,4 +10,6 @@ export const URLS = {
   LOGIN: "http://localhost:3000/login",
   LOGOUT: "http://localhost:3000/logout",
   MEAL_PLANS: "/mealplan",
+  ShoppingList: "/shoppingList/",
+  USER: "/users/",
 };

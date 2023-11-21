@@ -1,60 +1,47 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Row from "react-bootstrap/Row";
-import Dropdown from "react-bootstrap/Dropdown";
-import DropdownButton from "react-bootstrap/DropdownButton";
 import { Card, Table } from "react-bootstrap";
-import Cookies from "js-Cookie";
 import { SERVER_URL } from "./Config";
+import { getUserFromCookies, validateUserID } from "./UserAuthentication";
+import { DropdownSelector, daysOfWeeksOptions } from "./DropdownButton";
 
 export const MealPlanForDay = () => {
   const [mealPlanForUser, setMealPlanForUser] = useState([]);
   const [selectedDay, setSelectedDay] = useState([]);
   const [selectedDayState, setselectedDayState] = useState(false);
 
-  // Get user ID from cookies
-  let userIdFromCookie = Cookies.get("user_id");
-  const userID = userIdFromCookie ? userIdFromCookie.split("|")[1] : undefined;
- 
-  if (!userID) {
-    alert("You must be logged in to view this page");
-    return <></>;
-  } else {
-    const handleSelectedDay = (e) => {
-      setSelectedDay(e);
-      setselectedDayState(true);
+  const userID = getUserFromCookies();
+  validateUserID();
+  const handleSelectedDay = (e) => {
+    setSelectedDay(e);
+    setselectedDayState(true);
+  };
+  useEffect(() => {
+    const fetchMealPlan = async () => {
+      const mealPlan = await axios.get(
+        `${SERVER_URL}/mealplan/${userID}/${selectedDay}`
+      );
+
+      setMealPlanForUser(await mealPlan.data);
     };
-    useEffect(() => {
-      const fetchMealPlan = async () => {
-        const mealPlan = await axios.get(
-          `${SERVER_URL}/mealplan/${userID}/${selectedDay}`
-        );
+    void fetchMealPlan();
+  }, [selectedDay, userID]);
 
-        setMealPlanForUser(await mealPlan.data);
-      };
-      void fetchMealPlan();
-    }, [selectedDay, userID]);
-
-    return (
-      <>
-        <Row>
-          <DropdownButton
-            className="mt-5"
-            title="Day of Week"
-            onSelect={handleSelectedDay}
-          >
-         {["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"].map((day) => (
-            <Dropdown.Item key={day} eventKey={day}>
-              {day}
-            </Dropdown.Item>
-          ))}
-          </DropdownButton>
-          <h4>You selected {selectedDay}</h4>
-        </Row>
-        {selectedDayState ? selectedDayResults(mealPlanForUser) : null}
-      </>
-    );
-  }
+  return (
+    <>
+      <Row>
+        <DropdownSelector
+          title="Day of Week"
+          options={daysOfWeeksOptions}
+          onSelect={handleSelectedDay}
+          selectedValue={selectedDay}
+        />
+        <h4>You selected {selectedDay}</h4>
+      </Row>
+      {selectedDayState ? selectedDayResults(mealPlanForUser) : null}
+    </>
+  );
 };
 
 const selectedDayResults = (mealPlanForUser) => {
